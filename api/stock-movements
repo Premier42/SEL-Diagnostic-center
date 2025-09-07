@@ -1,0 +1,171 @@
+<?php
+// Stock Movements API endpoints
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+header('Access-Control-Allow-Headers: Content-Type');
+
+require_once '../config/database.php';
+
+$method = $_SERVER['REQUEST_METHOD'];
+$input = json_decode(file_get_contents('php://input'), true);
+
+try {
+    $pdo = getDBConnection();
+
+    switch ($method) {
+        case 'GET':
+            handleGetMovements($pdo);
+            break;
+        case 'POST':
+            handleCreateMovement($pdo, $input);
+            break;
+        default:
+            http_response_code(405);
+            echo json_encode(['error' => 'Method not allowed']);
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}
+
+function handleGetMovements($pdo) {
+    $itemId = $_GET['item_id'] ?? null;
+
+    $whereClause = '';
+    $params = [];
+
+    if ($itemId) {
+        $whereClause = 'WHERE sm.item_id = ?';
+        $params[] = $itemId;
+    }
+
+    $stmt = $pdo->prepare("
+        SELECT sm.*, c.item_name, u.username as user_name
+        FROM stock_movements sm
+        LEFT JOIN consumables c ON sm.item_id = c.id
+        LEFT JOIN users u ON sm.user_id = u.id
+        $whereClause
+        ORDER BY sm.created_at DESC
+        LIMIT 100
+    ");
+    $stmt->execute($params);
+    $movements = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode($movements);
+}
+
+function handleCreateMovement($pdo, $input) {
+    if (!$input) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid input data']);
+        return;
+    }
+
+    $required = ['item_id', 'action', 'quantity'];
+    foreach ($required as $field) {
+        if (!isset($input[$field]) || $input[$field] === '') {
+            http_response_code(400);
+            echo json_encode(['error' => "Field '$field' is required"]);
+            return;
+        }
+    }
+
+    $itemId = $input['item_id'];
+    $action = $input['action'];
+    $quantity = (int)$input['quantity'];
+    $notes = $input['notes'] ?? '';
+
+    if (!in_array($action, ['add', 'subtract', 'set'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid action. Must be add, subtract, or set']);
+        return;
+    }
+
+    if ($quantity < 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Quantity must be positive']);
+        return;
+    }
+
+    $pdo->beginTransaction();
+
+    try {
+        // Get current stock
+        $stmt = $pdo->prepare("SELECT current_stock, item_name FROM consumables WHERE id = ?");
+        $stmt->execute([$itemId]);
+        $item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$item) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Item not found']);
+            return;
+        }
+
+        $currentStock = (int)$item['current_stock'];
+        $previousStock = $currentStock;
+
+        // Calculate new stock based on action
+        switch ($action) {
+            case 'add':
+                $newStock = $currentStock + $quantity;
+                $movementType = 'in';
+                break;
+            case 'subtract':
+                $newStock = $currentStock - $quantity;
+                $movementType = 'out';
+                if ($newStock < 0) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Insufficient stock. Current stock: ' . $currentStock]);
+                    return;
+                }
+                break;
+            case 'set':
+                $newStock = $quantity;
+                $movementType = $quantity > $currentStock ? 'in' : 'out';
+                $quantity = abs($quantity - $currentStock);
+                break;
+        }
+
+        // Update stock in consumables table
+        $stmt = $pdo->prepare("UPDATE consumables SET current_stock = ? WHERE id = ?");
+        $stmt->execute([$newStock, $itemId]);
+
+        // Record stock movement
+        $stmt = $pdo->prepare("
+            INSERT INTO stock_movements (
+                item_id, movement_type, quantity, previous_stock,
+                new_stock, notes, user_id, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+
+        // For now, use user_id = 1 (admin). In a real app, get from session
+        $userId = 1;
+
+        $stmt->execute([
+            $itemId,
+            $movementType,
+            $quantity,
+            $previousStock,
+            $newStock,
+            $notes,
+            $userId
+        ]);
+
+        $pdo->commit();
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Stock updated successfully',
+            'previous_stock' => $previousStock,
+            'new_stock' => $newStock,
+            'item_name' => $item['item_name']
+        ]);
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        throw $e;
+    }
+}
+?>
