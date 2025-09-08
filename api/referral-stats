@@ -1,0 +1,39 @@
+<?php
+// Referral Statistics API
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+
+require_once '../config/database.php';
+
+try {
+    $pdo = getDBConnection();
+    
+    // Get active referrals (invoices from this month)
+    $activeQuery = "SELECT COUNT(*) as count FROM invoices WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())";
+    $activeResult = $pdo->query($activeQuery)->fetch(PDO::FETCH_ASSOC);
+    
+    // Get monthly referrals
+    $monthlyQuery = "SELECT COUNT(*) as count FROM invoices WHERE MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())";
+    $monthlyResult = $pdo->query($monthlyQuery)->fetch(PDO::FETCH_ASSOC);
+    
+    // Get referrals by doctor
+    $doctorQuery = "SELECT doctor_id, COUNT(*) as count FROM invoices WHERE doctor_id IS NOT NULL GROUP BY doctor_id";
+    $doctorResult = $pdo->query($doctorQuery)->fetchAll(PDO::FETCH_ASSOC);
+    
+    $doctorStats = [];
+    foreach ($doctorResult as $row) {
+        $doctorStats[$row['doctor_id']] = (int)$row['count'];
+    }
+    
+    echo json_encode([
+        'active' => (int)$activeResult['count'],
+        'monthly' => (int)$monthlyResult['count'],
+        'doctors' => $doctorStats
+    ]);
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+}
+?>
