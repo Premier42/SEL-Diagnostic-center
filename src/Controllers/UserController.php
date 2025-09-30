@@ -2,159 +2,221 @@
 
 namespace App\Controllers;
 
-use App\Models\User;
-use App\Core\Validation\Validator;
-
 class UserController extends BaseController
 {
-    private User $userModel;
-
-    public function __construct()
+    public function index()
     {
-        parent::__construct();
-        $this->userModel = new User();
-    }
-
-    public function index(): void
-    {
-        $this->requireRole('admin');
-
-        $searchTerm = $this->getInput('search', '');
-        $role = $this->getInput('role', '');
-
-        if ($searchTerm) {
-            $query = "SELECT * FROM users WHERE username LIKE ? OR full_name LIKE ? ORDER BY username ASC";
-            $searchPattern = "%{$searchTerm}%";
-            $users = $this->userModel->executeQuery($query, [$searchPattern, $searchPattern])->fetchAll();
-        } elseif ($role) {
-            $users = $this->userModel->getUsersByRole($role);
-        } else {
-            $users = $this->userModel->all([], 'username ASC');
+        // Check if user is admin
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+            $_SESSION['errors'] = ['general' => 'Access denied'];
+            redirect('/dashboard');
+            return;
         }
 
-        $this->view('admin/users/index', [
-            'users' => $users,
-            'search' => $searchTerm,
-            'selectedRole' => $role
-        ]);
+        $db = getDB();
+
+        try {
+            $search = $_GET['search'] ?? '';
+            $role = $_GET['role'] ?? '';
+
+            $query = "SELECT id, username, full_name, email, phone, role, is_active, last_login, created_at FROM users WHERE 1=1";
+            $params = [];
+
+            if ($search) {
+                $query .= " AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)";
+                $searchTerm = "%{$search}%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            if ($role) {
+                $query .= " AND role = ?";
+                $params[] = $role;
+            }
+
+            $query .= " ORDER BY username ASC";
+
+            $stmt = $db->prepare($query);
+            $stmt->execute($params);
+            $users = $stmt->fetchAll();
+
+            include __DIR__ . '/../../views/users/index.php';
+
+        } catch (Exception $e) {
+            log_activity("User listing error: " . $e->getMessage(), 'error');
+            $error_message = config('app.debug') ? $e->getMessage() : 'Unable to load users.';
+            include __DIR__ . '/../../views/errors/500.php';
+        }
     }
 
-    public function create(): void
+    public function create()
     {
-        $this->requireRole('admin');
+        // Check if user is admin
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+            $_SESSION['errors'] = ['general' => 'Access denied'];
+            redirect('/dashboard');
+            return;
+        }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->store();
             return;
         }
 
-        $this->view('admin/users/create');
+        include __DIR__ . '/../../views/users/create.php';
     }
 
-    public function store(): void
+    public function store()
     {
-        $this->requireRole('admin');
-
-        if (!$this->validateCsrf()) {
-            $this->json(['success' => false, 'message' => 'Invalid security token'], 400);
+        // Check if user is admin
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+            $_SESSION['errors'] = ['general' => 'Access denied'];
+            redirect('/dashboard');
             return;
         }
 
-        $data = [
-            'username' => $this->sanitizeInput($this->getInput('username')),
-            'password' => $this->getInput('password'),
-            'role' => $this->getInput('role'),
-            'email' => $this->sanitizeInput($this->getInput('email', '')),
-            'full_name' => $this->sanitizeInput($this->getInput('full_name', ''))
-        ];
-
-        $validator = Validator::make($data, [
-            'username' => 'required|min:3|alphanumeric',
-            'password' => 'required|min:6',
-            'role' => 'required',
-            'email' => 'email'
-        ]);
-
-        if (!$validator->validate()) {
-            $this->json(['success' => false, 'errors' => $validator->getErrors()], 400);
-            return;
-        }
-
-        // Check if username already exists
-        $existingUser = $this->userModel->findBy('username', $data['username']);
-        if ($existingUser) {
-            $this->json(['success' => false, 'message' => 'Username already exists'], 400);
-            return;
-        }
+        $db = getDB();
 
         try {
-            $this->userModel->createUser($data);
-            $this->redirect('/NPL/admin/users?success=User created successfully');
-        } catch (\Exception $e) {
-            $this->json(['success' => false, 'message' => 'Failed to create user: ' . $e->getMessage()], 500);
-        }
-    }
+            $data = [
+                'username' => trim($_POST['username'] ?? ''),
+                'password' => $_POST['password'] ?? '',
+                'full_name' => trim($_POST['full_name'] ?? ''),
+                'email' => trim($_POST['email'] ?? ''),
+                'phone' => trim($_POST['phone'] ?? ''),
+                'role' => $_POST['role'] ?? 'staff'
+            ];
 
-    public function edit(int $id): void
-    {
-        $this->requireRole('admin');
-
-        $user = $this->userModel->find($id);
-        if (!$user) {
-            http_response_code(404);
-            echo "User not found";
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->update($id);
-            return;
-        }
-
-        $this->view('admin/users/edit', ['user' => $user]);
-    }
-
-    public function update(int $id): void
-    {
-        $this->requireRole('admin');
-
-        if (!$this->validateCsrf()) {
-            $this->json(['success' => false, 'message' => 'Invalid security token'], 400);
-            return;
-        }
-
-        $data = [
-            'role' => $this->getInput('role'),
-            'email' => $this->sanitizeInput($this->getInput('email', '')),
-            'full_name' => $this->sanitizeInput($this->getInput('full_name', ''))
-        ];
-
-        // Only update password if provided
-        $newPassword = $this->getInput('password');
-        if (!empty($newPassword)) {
-            $data['password'] = $newPassword;
-        }
-
-        $validator = Validator::make($data, [
-            'role' => 'required',
-            'email' => 'email'
-        ]);
-
-        if (!$validator->validate()) {
-            $this->json(['success' => false, 'errors' => $validator->getErrors()], 400);
-            return;
-        }
-
-        try {
-            if (isset($data['password'])) {
-                $this->userModel->updatePassword($id, $data['password']);
-                unset($data['password']);
+            // Validation
+            $errors = [];
+            if (empty($data['username'])) {
+                $errors['username'] = 'Username is required';
             }
-            
-            $this->userModel->update($id, $data);
-            $this->redirect('/NPL/admin/users?success=User updated successfully');
-        } catch (\Exception $e) {
-            $this->json(['success' => false, 'message' => 'Failed to update user: ' . $e->getMessage()], 500);
+            if (empty($data['password'])) {
+                $errors['password'] = 'Password is required';
+            } elseif (strlen($data['password']) < 6) {
+                $errors['password'] = 'Password must be at least 6 characters';
+            }
+            if (empty($data['full_name'])) {
+                $errors['full_name'] = 'Full name is required';
+            }
+
+            if (!empty($errors)) {
+                $_SESSION['errors'] = $errors;
+                $_SESSION['old'] = $data;
+                redirect('/users/create');
+                return;
+            }
+
+            // Check if username exists
+            $stmt = $db->prepare("SELECT id FROM users WHERE username = ?");
+            $stmt->execute([$data['username']]);
+            if ($stmt->fetch()) {
+                $_SESSION['errors'] = ['username' => 'Username already exists'];
+                $_SESSION['old'] = $data;
+                redirect('/users/create');
+                return;
+            }
+
+            // Hash password
+            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+
+            $stmt = $db->prepare("
+                INSERT INTO users (username, password, full_name, email, phone, role)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+
+            $stmt->execute([
+                $data['username'],
+                $hashedPassword,
+                $data['full_name'],
+                $data['email'],
+                $data['phone'],
+                $data['role']
+            ]);
+
+            $_SESSION['success'] = 'User created successfully';
+            redirect('/users');
+
+        } catch (Exception $e) {
+            log_activity("User creation error: " . $e->getMessage(), 'error');
+            $_SESSION['errors'] = ['general' => 'Failed to create user'];
+            redirect('/users/create');
+        }
+    }
+
+    public function delete()
+    {
+        $this->requireAuth();
+
+        // Check if user is admin
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+            http_response_code(403);
+            include __DIR__ . '/../../views/errors/403.php';
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/users');
+            return;
+        }
+
+        // Validate CSRF token
+        if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+            $this->flashMessage('error', 'Invalid security token');
+            redirect('/users');
+            return;
+        }
+
+        $uri = $_SERVER['REQUEST_URI'];
+        $segments = explode('/', trim($uri, '/'));
+        $id = (int)($segments[1] ?? 0);
+
+        if (!$id) {
+            redirect('/users');
+            return;
+        }
+
+        // Prevent deleting yourself
+        if ($id == $_SESSION['user_id']) {
+            $this->flashMessage('error', 'You cannot delete your own account');
+            redirect('/users');
+            return;
+        }
+
+        $db = getDB();
+
+        try {
+            // Get user details before deletion
+            $stmt = $db->prepare("SELECT username, full_name FROM users WHERE id = ?");
+            $stmt->execute([$id]);
+            $user = $stmt->fetch();
+
+            if (!$user) {
+                $this->flashMessage('error', 'User not found');
+                redirect('/users');
+                return;
+            }
+
+            // Delete user
+            $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$id]);
+
+            log_activity("Deleted user: {$user['username']}", 'info', [
+                'user_id' => $id,
+                'username' => $user['username'],
+                'deleted_by' => $_SESSION['user_id']
+            ]);
+
+            $this->flashMessage('success', 'User deleted successfully!');
+            redirect('/users');
+
+        } catch (Exception $e) {
+            log_activity("User deletion error: " . $e->getMessage(), 'error');
+
+            $this->flashMessage('error', 'Failed to delete user. Please try again.');
+            redirect('/users');
         }
     }
 }

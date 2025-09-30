@@ -83,9 +83,9 @@ CREATE TABLE IF NOT EXISTS system_logs (
 );
 
 -- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
-CREATE INDEX IF NOT EXISTS idx_users_last_login ON users (last_login);
-CREATE INDEX IF NOT EXISTS idx_system_config_updated ON system_config (updated_at);
+CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_users_last_login ON users (last_login);
+CREATE INDEX idx_system_config_updated ON system_config (updated_at);
 
 -- Create views for common queries
 CREATE OR REPLACE VIEW active_users AS

@@ -1,0 +1,64 @@
+# Environment Configuration
+.env
+.env.local
+.env.*.local
+
+# Sensitive Files
+*.key
+*.pem
+*.p12
+credentials.json
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+storage/logs/*.log
+
+# Cache
+storage/cache/*
+storage/sessions/*
+!storage/cache/.gitkeep
+!storage/sessions/.gitkeep
+
+# Uploads
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# Temporary Files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Testing
+test_*.py
+test_*.html
+test_cookies.txt
+cookies.txt
+
+# Database
+*.sql.backup
+*.db
+*.sqlite
+
+# Composer (if using)
+/vendor/
+
+# Node modules (if using)
+node_modules/

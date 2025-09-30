@@ -153,6 +153,6 @@ INSERT INTO test_results (report_id, parameter_name, value, unit, normal_range, 
 (5, 'LDL Cholesterol', '150', 'mg/dL', '<100 mg/dL', TRUE);
 
 -- Create additional indexes for performance
-CREATE INDEX IF NOT EXISTS idx_test_reports_created_at ON test_reports (created_at);
-CREATE INDEX IF NOT EXISTS idx_test_results_value ON test_results (value);
-CREATE INDEX IF NOT EXISTS idx_doctors_phone ON doctors (phone);
+CREATE INDEX idx_test_reports_created_at ON test_reports (created_at);
+CREATE INDEX idx_test_results_value ON test_results (value);
+CREATE INDEX idx_doctors_phone ON doctors (phone);

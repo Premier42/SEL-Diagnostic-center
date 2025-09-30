@@ -2,84 +2,99 @@
 
 namespace App\Controllers;
 
-use App\Core\Application;
-use App\Core\Session\SessionManager;
-use App\Services\AuthService;
-
-abstract class BaseController
+class BaseController
 {
-    protected Application $app;
-    protected SessionManager $session;
-    protected AuthService $auth;
-
-    public function __construct()
+    protected function requireAuth()
     {
-        $this->app = Application::getInstance();
-        $this->session = $this->app->getSession();
-        $this->auth = new AuthService(new \App\Models\User(), $this->session);
-    }
-
-    protected function view(string $template, array $data = []): void
-    {
-        $viewPath = __DIR__ . '/../../views/' . $template . '.php';
-        
-        if (!file_exists($viewPath)) {
-            throw new \Exception("View file not found: {$template}");
+        if (!isset($_SESSION['user_id'])) {
+            redirect('/');
+            exit;
         }
-
-        // Extract data to variables
-        extract($data);
-        
-        // Add common variables
-        $csrfToken = $this->session->generateCsrfToken();
-        $currentUser = $this->auth->getCurrentUser();
-        $isLoggedIn = $this->auth->isAuthenticated();
-        
-        require $viewPath;
     }
 
-    protected function redirect(string $url): void
+    protected function requireRole($role)
     {
-        header("Location: {$url}");
-        exit();
+        $this->requireAuth();
+
+        if ($_SESSION['role'] !== $role) {
+            http_response_code(403);
+            include __DIR__ . '/../../views/errors/403.php';
+            exit;
+        }
     }
 
-    protected function json(array $data, int $statusCode = 200): void
+    protected function json($data, $status = 200)
     {
-        http_response_code($statusCode);
+        http_response_code($status);
         header('Content-Type: application/json');
         echo json_encode($data);
-        exit();
+        exit;
     }
 
-    protected function validateCsrf(): bool
+    protected function validate($data, $rules)
     {
-        $token = $_POST['csrf_token'] ?? $_GET['csrf_token'] ?? '';
-        return $this->session->validateCsrfToken($token);
+        $errors = [];
+
+        foreach ($rules as $field => $rule) {
+            $value = $data[$field] ?? null;
+            $ruleArray = explode('|', $rule);
+
+            foreach ($ruleArray as $singleRule) {
+                if ($singleRule === 'required' && empty($value)) {
+                    $errors[$field][] = ucfirst($field) . ' is required';
+                }
+
+                if (strpos($singleRule, 'min:') === 0) {
+                    $minLength = (int)substr($singleRule, 4);
+                    if (strlen($value) < $minLength) {
+                        $errors[$field][] = ucfirst($field) . " must be at least {$minLength} characters";
+                    }
+                }
+
+                if (strpos($singleRule, 'max:') === 0) {
+                    $maxLength = (int)substr($singleRule, 4);
+                    if (strlen($value) > $maxLength) {
+                        $errors[$field][] = ucfirst($field) . " must not exceed {$maxLength} characters";
+                    }
+                }
+
+                if ($singleRule === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $errors[$field][] = ucfirst($field) . ' must be a valid email';
+                }
+
+                if ($singleRule === 'numeric' && !is_numeric($value)) {
+                    $errors[$field][] = ucfirst($field) . ' must be numeric';
+                }
+            }
+        }
+
+        return $errors;
     }
 
-    protected function requireAuth(): void
+    protected function sanitize($input)
     {
-        $this->auth->requireAuth();
-    }
+        if (is_array($input)) {
+            return array_map([$this, 'sanitize'], $input);
+        }
 
-    protected function requireRole(string $role): void
-    {
-        $this->auth->requireRole($role);
-    }
-
-    protected function getInput(string $key, $default = null)
-    {
-        return $_POST[$key] ?? $_GET[$key] ?? $default;
-    }
-
-    protected function getAllInput(): array
-    {
-        return array_merge($_GET, $_POST);
-    }
-
-    protected function sanitizeInput(string $input): string
-    {
         return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+    }
+
+    protected function flashMessage($type, $message)
+    {
+        $_SESSION['flash'] = [
+            'type' => $type,
+            'message' => $message
+        ];
+    }
+
+    protected function getFlashMessage()
+    {
+        if (isset($_SESSION['flash'])) {
+            $flash = $_SESSION['flash'];
+            unset($_SESSION['flash']);
+            return $flash;
+        }
+        return null;
     }
 }

@@ -78,6 +78,6 @@ INSERT INTO invoice_tests (invoice_id, test_code, test_name, price) VALUES
 (8, 'CRP', 'C-Reactive Protein', 500.00);
 
 -- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_invoices_patient_phone ON invoices (patient_phone);
-CREATE INDEX IF NOT EXISTS idx_invoices_total_amount ON invoices (total_amount);
-CREATE INDEX IF NOT EXISTS idx_invoice_tests_price ON invoice_tests (price);
+CREATE INDEX idx_invoices_patient_phone ON invoices (patient_phone);
+CREATE INDEX idx_invoices_total_amount ON invoices (total_amount);
+CREATE INDEX idx_invoice_tests_price ON invoice_tests (price);
