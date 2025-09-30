@@ -12,15 +12,19 @@ A modern, feature-rich laboratory management system built with PHP and MySQL, de
 - **Bengali Localization**: Support for local language and currency (৳)
 
 ### Medical Operations
-- **Invoice Management**: Create, track, and manage patient invoices
-- **Test Management**: Comprehensive laboratory test catalog
+- **Invoice Management**: Create, track, and manage patient invoices with PDF generation
+- **Test Management**: Comprehensive laboratory test catalog with edit functionality
 - **Patient Records**: Complete patient information management
-- **Payment Tracking**: Support for multiple payment methods
-- **Report Generation**: Professional test reports and results
+- **Payment Tracking**: Support for multiple payment methods with real-time updates
+- **Report Generation**: Professional test reports with lab tech data entry
+- **Doctor Management**: Maintain referring physician database
 
 ### Administrative Features
 - **User Management**: Role-based access control (Admin, Staff, Technician)
-- **Audit Logging**: Complete activity tracking and monitoring
+- **Audit Logging**: Complete activity tracking with 30+ log entries
+- **SMS Notifications**: Bangladesh SMS integration via SMS.NET.BD
+- **Inventory Management**: Track reagents, consumables, and lab supplies
+- **Lab Tech Interface**: Data entry for test results and reports
 - **Search & Filtering**: Advanced search across all modules
 - **Data Export**: CSV export capabilities
 - **Performance Analytics**: Real-time system metrics
@@ -37,24 +41,47 @@ A modern, feature-rich laboratory management system built with PHP and MySQL, de
 
 ```
 ├── src/                    # Application source code
-│   ├── Controllers/        # Request handlers
-│   ├── Models/            # Data models
-│   ├── Services/          # Business logic
-│   └── Core/              # Core framework components
+│   └── Controllers/        # Request handlers
+│       ├── AuthController.php
+│       ├── DashboardController.php
+│       ├── InvoiceController.php
+│       ├── TestController.php
+│       ├── ReportController.php
+│       ├── UserController.php
+│       ├── DoctorController.php
+│       ├── AuditController.php
+│       ├── InventoryController.php
+│       └── SmsController.php
 ├── views/                 # View templates
 │   ├── auth/              # Authentication views
 │   ├── dashboard/         # Dashboard components
-│   ├── invoices/          # Invoice management
-│   ├── tests/             # Test management
+│   ├── invoices/          # Invoice management (with PDF)
+│   ├── tests/             # Test management (CRUD)
+│   ├── reports/           # Lab reports and data entry
+│   ├── users/             # User management
+│   ├── doctors/           # Doctor management
+│   ├── audit/             # Audit log viewer
+│   ├── inventory/         # Inventory management
+│   ├── sms/               # SMS dashboard
 │   └── errors/            # Error pages
 ├── public/                # Web root directory
-│   └── index.php         # Application entry point
+│   ├── index.php          # Application entry point
+│   └── js/                # JavaScript files
+│       └── phone-formatter.js  # Bangladesh phone auto-formatter
 ├── config/                # Configuration files
-├── database/              # Database schemas and migrations
-├── assets/                # Static assets (CSS, JS, images)
-├── .env                   # Environment configuration
+├── database/              # Database schemas and seed data
+│   ├── core_schema.sql
+│   ├── medical_schema.sql
+│   ├── invoice_schema.sql
+│   ├── sms_schema.sql
+│   ├── audit_schema.sql
+│   ├── inventory_schema.sql
+│   └── seed_data.sql
+├── .env                   # Environment configuration (gitignored)
+├── .env.example           # Environment template
+├── .gitignore             # Git ignore rules
 ├── bootstrap.php          # Application bootstrap
-└── test_api.py           # Python unit tests
+└── README.md              # This file
 ```
 
 ## ⚡ Quick Start
@@ -83,8 +110,14 @@ A modern, feature-rich laboratory management system built with PHP and MySQL, de
    # Create database
    mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
 
-   # Import schema
+   # Import schemas in order
    mysql -u root -p pathology_lab < database/core_schema.sql
+   mysql -u root -p pathology_lab < database/medical_schema.sql
+   mysql -u root -p pathology_lab < database/invoice_schema.sql
+   mysql -u root -p pathology_lab < database/sms_schema.sql
+   mysql -u root -p pathology_lab < database/audit_schema.sql
+   mysql -u root -p pathology_lab < database/inventory_schema.sql
+   mysql -u root -p pathology_lab < database/seed_data.sql
    ```
 
 4. **Start the application**
@@ -95,9 +128,15 @@ A modern, feature-rich laboratory management system built with PHP and MySQL, de
    # Or configure Apache/Nginx to point to public/ directory
    ```
 
-5. **Access the application**
+5. **Configure SMS (Optional)**
+   - Sign up at https://sms.net.bd/signup/ for free credits
+   - Get your API key from the dashboard
+   - Update `SMS_API_KEY` in `.env` file
+   - See `SMS_PROVIDER_SETUP.md` for detailed instructions
+
+6. **Access the application**
    - Open `http://localhost:8000` in your browser
-   - Default login: `admin@example.com` / `admin123`
+   - Default login: `admin` / `admin123`
 
 ## 🔧 Configuration
 
@@ -128,6 +167,11 @@ The system uses MySQL with the following key tables:
 - `tests` - Laboratory test catalog
 - `doctors` - Referring physician information
 - `invoice_tests` - Test-invoice relationships
+- `test_reports` - Lab reports and results
+- `test_results` - Individual test parameter results
+- `sms_logs` - SMS notification history
+- `audit_logs` - System activity tracking
+- `inventory_items` - Lab supplies and consumables
 
 ## 🎯 Usage Guide
 
@@ -198,12 +242,38 @@ The test suite covers:
 - `GET /invoices/create` - Create invoice form
 - `POST /invoices/store` - Store new invoice
 - `GET /invoices/{id}` - View specific invoice
+- `GET /invoices/{id}/pdf` - Generate PDF invoice
+- `POST /invoices/{id}/update-payment` - Update payment status
 
 ### Tests
 - `GET /tests` - Test listing
 - `GET /tests/create` - Create test form (Admin)
 - `POST /tests/store` - Store new test (Admin)
 - `GET /tests/{code}` - View specific test
+- `GET /tests/{code}/edit` - Edit test form (Admin)
+- `POST /tests/{code}/update` - Update test (Admin)
+
+### Reports
+- `GET /reports` - Report listing
+- `GET /reports/{id}` - View report details
+- `GET /reports/{id}/edit` - Lab tech data entry form
+- `POST /reports/{id}/update` - Update report with results
+
+### Users
+- `GET /users` - User listing (Admin)
+- `GET /users/create` - Create user form (Admin)
+- `POST /users/store` - Store new user (Admin)
+- `DELETE /users/{id}` - Delete user (Admin)
+
+### Audit Logs
+- `GET /audit` - Audit log viewer (Admin)
+
+### Inventory
+- `GET /inventory` - Inventory management (Admin)
+
+### SMS
+- `GET /sms` - SMS dashboard (Admin)
+- `POST /sms/send` - Send SMS notification (Admin)
 
 ## 📊 Performance
 
