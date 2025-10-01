@@ -13,9 +13,9 @@ if (session_status() === PHP_SESSION_NONE) {
 // Database configuration
 function getDBConnection() {
     $db_host = 'localhost';
-    $db_name = 'diagnostic_center';
-    $db_user = 'npl_user';
-    $db_pass = 'npl_password';
+    $db_name = 'pathology_lab';
+    $db_user = 'root';
+    $db_pass = '';
 
     try {
         $pdo = new PDO(

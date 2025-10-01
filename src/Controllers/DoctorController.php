@@ -2,144 +2,100 @@
 
 namespace App\Controllers;
 
-use App\Models\Doctor;
-use App\Core\Validation\Validator;
-
 class DoctorController extends BaseController
 {
-    private Doctor $doctorModel;
-
-    public function __construct()
+    public function index()
     {
-        parent::__construct();
-        $this->doctorModel = new Doctor();
-    }
+        $db = getDB();
 
-    public function index(): void
-    {
-        $this->requireRole('admin');
+        try {
+            $search = $_GET['search'] ?? '';
 
-        $searchTerm = $this->getInput('search', '');
-        $page = (int) $this->getInput('page', 1);
-        $perPage = 20;
+            if ($search) {
+                $stmt = $db->prepare("
+                    SELECT * FROM doctors
+                    WHERE (name LIKE ? OR phone LIKE ? OR specialization LIKE ?)
+                    AND is_active = 1
+                    ORDER BY name ASC
+                ");
+                $searchTerm = "%{$search}%";
+                $stmt->execute([$searchTerm, $searchTerm, $searchTerm]);
+            } else {
+                $stmt = $db->query("
+                    SELECT * FROM doctors
+                    WHERE is_active = 1
+                    ORDER BY name ASC
+                ");
+            }
 
-        if ($searchTerm) {
-            $doctors = $this->doctorModel->search($searchTerm, $perPage, ($page - 1) * $perPage);
-        } else {
-            $doctors = $this->doctorModel->all([], 'name ASC', $perPage, ($page - 1) * $perPage);
+            $doctors = $stmt->fetchAll();
+
+            include __DIR__ . '/../../views/doctors/index.php';
+
+        } catch (Exception $e) {
+            log_activity("Doctor listing error: " . $e->getMessage(), 'error');
+            $error_message = config('app.debug') ? $e->getMessage() : 'Unable to load doctors.';
+            include __DIR__ . '/../../views/errors/500.php';
         }
-
-        $this->view('admin/doctors/index', [
-            'doctors' => $doctors,
-            'search' => $searchTerm,
-            'page' => $page
-        ]);
     }
 
-    public function create(): void
+    public function create()
     {
-        $this->requireRole('admin');
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->store();
             return;
         }
 
-        $this->view('admin/doctors/create');
+        include __DIR__ . '/../../views/doctors/create.php';
     }
 
-    public function store(): void
+    public function store()
     {
-        $this->requireRole('admin');
-
-        if (!$this->validateCsrf()) {
-            $this->json(['success' => false, 'message' => 'Invalid security token'], 400);
-            return;
-        }
-
-        $data = [
-            'name' => $this->sanitizeInput($this->getInput('name')),
-            'qualifications' => $this->sanitizeInput($this->getInput('qualifications')),
-            'workplace' => $this->sanitizeInput($this->getInput('workplace')),
-            'phone' => $this->sanitizeInput($this->getInput('phone', '')),
-            'email' => $this->sanitizeInput($this->getInput('email', '')),
-            'address' => $this->sanitizeInput($this->getInput('address', ''))
-        ];
-
-        $validator = Validator::make($data, [
-            'name' => 'required|min:2',
-            'qualifications' => 'required',
-            'workplace' => 'required',
-            'email' => 'email'
-        ]);
-
-        if (!$validator->validate()) {
-            $this->json(['success' => false, 'errors' => $validator->getErrors()], 400);
-            return;
-        }
+        $db = getDB();
 
         try {
-            $this->doctorModel->create($data);
-            $this->redirect('/NPL/admin/doctors?success=Doctor added successfully');
-        } catch (\Exception $e) {
-            $this->json(['success' => false, 'message' => 'Failed to add doctor: ' . $e->getMessage()], 500);
-        }
-    }
+            $data = [
+                'name' => trim($_POST['name'] ?? ''),
+                'qualifications' => trim($_POST['qualifications'] ?? ''),
+                'specialization' => trim($_POST['specialization'] ?? ''),
+                'workplace' => trim($_POST['workplace'] ?? ''),
+                'phone' => trim($_POST['phone'] ?? ''),
+                'email' => trim($_POST['email'] ?? ''),
+                'address' => trim($_POST['address'] ?? ''),
+                'license_number' => trim($_POST['license_number'] ?? '')
+            ];
 
-    public function edit(int $id): void
-    {
-        $this->requireRole('admin');
+            // Validation
+            if (empty($data['name'])) {
+                $_SESSION['errors'] = ['name' => 'Name is required'];
+                $_SESSION['old'] = $data;
+                redirect('/doctors/create');
+                return;
+            }
 
-        $doctor = $this->doctorModel->find($id);
-        if (!$doctor) {
-            http_response_code(404);
-            echo "Doctor not found";
-            return;
-        }
+            $stmt = $db->prepare("
+                INSERT INTO doctors (name, qualifications, specialization, workplace, phone, email, address, license_number)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ");
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->update($id);
-            return;
-        }
+            $stmt->execute([
+                $data['name'],
+                $data['qualifications'],
+                $data['specialization'],
+                $data['workplace'],
+                $data['phone'],
+                $data['email'],
+                $data['address'],
+                $data['license_number']
+            ]);
 
-        $this->view('admin/doctors/edit', ['doctor' => $doctor]);
-    }
+            $_SESSION['success'] = 'Doctor added successfully';
+            redirect('/doctors');
 
-    public function update(int $id): void
-    {
-        $this->requireRole('admin');
-
-        if (!$this->validateCsrf()) {
-            $this->json(['success' => false, 'message' => 'Invalid security token'], 400);
-            return;
-        }
-
-        $data = [
-            'name' => $this->sanitizeInput($this->getInput('name')),
-            'qualifications' => $this->sanitizeInput($this->getInput('qualifications')),
-            'workplace' => $this->sanitizeInput($this->getInput('workplace')),
-            'phone' => $this->sanitizeInput($this->getInput('phone', '')),
-            'email' => $this->sanitizeInput($this->getInput('email', '')),
-            'address' => $this->sanitizeInput($this->getInput('address', ''))
-        ];
-
-        $validator = Validator::make($data, [
-            'name' => 'required|min:2',
-            'qualifications' => 'required',
-            'workplace' => 'required',
-            'email' => 'email'
-        ]);
-
-        if (!$validator->validate()) {
-            $this->json(['success' => false, 'errors' => $validator->getErrors()], 400);
-            return;
-        }
-
-        try {
-            $this->doctorModel->update($id, $data);
-            $this->redirect('/NPL/admin/doctors?success=Doctor updated successfully');
-        } catch (\Exception $e) {
-            $this->json(['success' => false, 'message' => 'Failed to update doctor: ' . $e->getMessage()], 500);
+        } catch (Exception $e) {
+            log_activity("Doctor creation error: " . $e->getMessage(), 'error');
+            $_SESSION['errors'] = ['general' => 'Failed to add doctor'];
+            redirect('/doctors/create');
         }
     }
 }
