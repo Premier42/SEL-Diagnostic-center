@@ -1,0 +1,12 @@
+/* SEL Diagnostic Center - Custom Styles */
+
+/* This file will be processed by Vite */
+/* You can use modern CSS features here */
+
+:root {
+  --primary-color: #4F46E5;
+  --secondary-color: #10B981;
+}
+
+/* Add your custom styles here */
+/* Bootstrap is loaded via CDN in the views */

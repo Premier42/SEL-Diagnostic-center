@@ -19,12 +19,34 @@ A modern laboratory management system built with PHP and MySQL for diagnostic ce
 - **Backend**: PHP 7.4+ with MVC architecture
 - **Database**: MySQL 5.7+
 - **Frontend**: Bootstrap 5.3, FontAwesome, JavaScript
+- **Build Tool**: Vite 5 (hot reload, fast builds)
+
+## ⚡ Quick Start (TL;DR)
+
+```bash
+# Clone and install
+git clone <repo-url>
+cd SEL-Diagnostic-center
+npm install
+
+# Setup database
+cp .env.example .env
+# Edit .env with your DB credentials
+# Create database and import SQL files (see detailed steps below)
+
+# Run the app
+npm run dev
+
+# Open http://localhost:8000
+# Login: admin / password
+```
 
 ## 📦 Installation
 
 ### Prerequisites
 - PHP 7.4+ (with MySQL extension)
 - MySQL 5.7+
+- Node.js 18+ and npm
 - XAMPP (recommended) or any web server
 
 ---
@@ -37,7 +59,12 @@ git clone https://github.com/your-repo/SEL-Diagnostic-center.git
 cd SEL-Diagnostic-center
 ```
 
-### Step 2: Setup Environment
+### Step 2: Install Dependencies
+```bash
+npm install
+```
+
+### Step 3: Setup Environment
 Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
@@ -53,19 +80,19 @@ DB_PASS=
 ```
 > **Note**: XAMPP's default MySQL has no password (leave `DB_PASS` empty)
 
-### Step 3: Start XAMPP
+### Step 4: Start XAMPP
 1. Open **XAMPP Control Panel**
 2. Start **Apache** and **MySQL** modules
 3. Wait until both show green "Running" status
 
-### Step 4: Create Database
+### Step 5: Create Database
 1. Open browser → Go to `http://localhost/phpmyadmin`
 2. Click **"New"** in left sidebar
 3. Database name: `pathology_lab`
 4. Collation: Select `utf8mb4_unicode_ci`
 5. Click **"Create"**
 
-### Step 5: Import Database Files
+### Step 6: Import Database Files
 1. Click on **`pathology_lab`** database (left sidebar)
 2. Click **"Import"** tab
 3. Import these files **in exact order** (one at a time):
@@ -83,7 +110,7 @@ DB_PASS=
    - Click "Choose File" → Select `database/3_demo_data.sql` → Click "Import"
    - ✅ Wait for success message
 
-### Step 6: Move Project to XAMPP
+### Step 7: Move Project to XAMPP
 Move your project folder to XAMPP's htdocs directory:
 
 **Windows:**
@@ -104,14 +131,26 @@ sudo mv SEL-Diagnostic-center /Applications/XAMPP/htdocs/
 # Or copy manually to: /Applications/XAMPP/htdocs/
 ```
 
-### Step 7: Run the Application
-1. Open browser
-2. Go to: `http://localhost/SEL-Diagnostic-center/public`
-3. Login with default credentials:
-   - **Username**: `admin`
-   - **Password**: `password`
+### Step 8: Run the Application
 
-✅ **Done! You should now see the dashboard.**
+Start the development server:
+```bash
+npm run dev
+```
+
+This command will:
+- Start Vite dev server (port 5173) for hot reload
+- Start PHP server (port 8000)
+- Both run concurrently
+
+**Open browser:**
+- Go to: `http://localhost:8000`
+
+**Login:**
+- **Username**: `admin`
+- **Password**: `password`
+
+✅ **Done! You should now see the dashboard with hot reload support!**
 
 ---
 
@@ -123,7 +162,12 @@ git clone https://github.com/your-repo/SEL-Diagnostic-center.git
 cd SEL-Diagnostic-center
 ```
 
-### Step 2: Setup Environment
+### Step 2: Install Dependencies
+```bash
+npm install
+```
+
+### Step 3: Setup Environment
 ```bash
 cp .env.example .env
 ```
@@ -137,7 +181,7 @@ DB_USER=root
 DB_PASS=your_password
 ```
 
-### Step 3: Create Database and Import Files
+### Step 4: Create Database and Import Files
 
 **For Windows (XAMPP):**
 ```bash
@@ -185,28 +229,38 @@ mysql -u root -p pathology_lab < database/2_initial_data.sql
 mysql -u root -p pathology_lab < database/3_demo_data.sql
 ```
 
-### Step 4: Run the Application
+### Step 5: Run the Application
 
-**Option A: PHP Built-in Server (Quick Testing)**
+**Option A: Vite Dev Server (Recommended - with hot reload)**
+```bash
+npm run dev
+```
+This starts both Vite (port 5173) and PHP (port 8000) servers.
+
+Then open: `http://localhost:8000`
+
+**Option B: PHP Server Only (without Vite)**
 ```bash
 php -S localhost:8000 -t public
 ```
 Then open: `http://localhost:8000`
 
-**Option B: XAMPP/Apache**
+**Option C: XAMPP/Apache**
 
 Move project to XAMPP directory:
 - **Windows**: `C:\xampp\htdocs\`
 - **Linux**: `/opt/lampp/htdocs/`
 - **Mac**: `/Applications/XAMPP/htdocs/`
 
-Then open browser: `http://localhost/SEL-Diagnostic-center/public`
+Then run: `npm run dev` or just access `http://localhost/SEL-Diagnostic-center/public`
 
-### Step 5: Login
+### Step 6: Login
 - **Username**: `admin`
 - **Password**: `password`
 
 ✅ **Done! You should now see the dashboard.**
+
+> 💡 **Tip**: Use `npm run dev` for the best development experience with hot reload!
 
 ---
 
