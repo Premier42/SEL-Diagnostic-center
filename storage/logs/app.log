@@ -1,0 +1,105 @@
+[2025-09-30 18:11:08] warning: Failed login attempt for username: admin@example.com {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:11:33] warning: Failed login attempt for username: admin@example.com {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:14:37] warning: Failed login attempt for username: admin@example.com {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:15:36] warning: Failed login attempt for username: admin {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:16:01] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:16:56] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:03] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:03] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:03] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:17:03] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:03] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:03] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:03] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:39] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:45] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:46] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:46] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:17:52] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:49] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:49] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:18:50] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:01] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:02] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:20:08] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:22:36] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:23:40] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:11] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:28] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:28] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] warning: Failed login attempt for username: invalid_user {"ip_address":"127.0.0.1","user_agent":"python-requests\/2.31.0"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:24:29] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 18:30:07] warning: Failed login attempt for username: admin {"ip_address":"127.0.0.1","user_agent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36"}
+[2025-09-30 18:30:13] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 19:02:46] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 19:05:36] warning: Failed login attempt for username: admin {"ip_address":"127.0.0.1","user_agent":"Mozilla\/5.0 (X11; Ubuntu; Linux x86_64; rv:143.0) Gecko\/20100101 Firefox\/143.0"}
+[2025-09-30 19:08:35] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 19:45:50] info: User admin logged out {"user_id":1}
+[2025-09-30 19:45:58] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-09-30 19:48:18] info: Created invoice #31 for patient: test name {"invoice_id":"31","user_id":1}
+[2025-09-30 20:30:44] info: Sent SMS to: 01302088525 {"phone":"01302088525","status":"failed","user_id":1}
+[2025-09-30 20:50:33] info: Sent SMS to: 01302088525 {"phone":"01302088525","status":"failed","user_id":1}
+[2025-10-02 10:23:41] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-10-02 12:42:17] info: User admin logged in successfully {"user_id":1,"ip_address":"127.0.0.1"}
+[2025-10-02 12:43:01] info: User admin logged out {"user_id":1}
+[2025-10-02 12:43:03] warning: Failed login attempt for username: asd {"ip_address":"127.0.0.1","user_agent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36"}
+[2025-10-02 12:43:08] warning: Failed login attempt for username: admin {"ip_address":"127.0.0.1","user_agent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/140.0.0.0 Safari\/537.36"}
