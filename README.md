@@ -23,6 +23,28 @@ A modern laboratory management system built with PHP and MySQL for diagnostic ce
 
 ## ⚡ Quick Start (TL;DR)
 
+### 🐳 Using Docker (Easiest - Recommended!)
+
+```bash
+# Clone the repo
+git clone <repo-url>
+cd SEL-Diagnostic-center
+
+# Copy environment file (optional - Docker uses defaults)
+cp .env.example .env
+
+# Start everything with one command!
+docker-compose up -d
+
+# Open http://localhost:8080
+# Login: admin / password
+# phpMyAdmin: http://localhost:8081
+```
+
+That's it! No XAMPP, no PHP installation, no MySQL setup needed! 🎉
+
+### 📦 Traditional Setup (XAMPP)
+
 ```bash
 # Clone and install
 git clone <repo-url>
@@ -44,6 +66,12 @@ npm run dev
 ## 📦 Installation
 
 ### Prerequisites
+
+**Docker Method (Easiest):**
+- Docker Desktop (Windows/Mac) or Docker Engine (Linux)
+- That's it! Everything else runs in containers.
+
+**Traditional Method:**
 - PHP 7.4+ (with MySQL extension)
 - MySQL 5.7+
 - Node.js 18+ and npm
@@ -51,7 +79,139 @@ npm run dev
 
 ---
 
-## Method 1: Using XAMPP (Recommended for Windows)
+## Method 1: Using Docker (Easiest - Zero Setup!)
+
+### What You Get
+- ✅ PHP 8.2 + Apache (pre-configured)
+- ✅ MariaDB 10.11 (auto-imports database)
+- ✅ phpMyAdmin (database management)
+- ✅ All dependencies installed
+- ✅ Proper networking between services
+- ✅ Volume persistence (data survives restarts)
+
+### Step 1: Install Docker
+
+**Windows/Mac:**
+1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop)
+2. Install and launch it
+3. Wait for Docker to start (whale icon in system tray)
+
+**Linux:**
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Install Docker Compose
+sudo apt-get install docker-compose-plugin
+
+# Add your user to docker group
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### Step 2: Clone Repository
+```bash
+git clone https://github.com/your-repo/SEL-Diagnostic-center.git
+cd SEL-Diagnostic-center
+```
+
+### Step 3: Configure Environment (Optional)
+```bash
+cp .env.example .env
+```
+> Docker works with default settings! Only edit `.env` if you want to customize.
+
+### Step 4: Start the Application
+```bash
+docker-compose up -d
+```
+
+This single command:
+- ✅ Builds the PHP/Apache container
+- ✅ Downloads MariaDB and phpMyAdmin images
+- ✅ Creates network and volumes
+- ✅ Imports `diagnostic_center.sql` automatically
+- ✅ Starts all services in the background
+
+**First run takes 2-3 minutes to download images. Subsequent starts take <10 seconds!**
+
+### Step 5: Access the Application
+
+Wait about 30 seconds for database initialization, then:
+
+- **Main App**: http://localhost:8080
+- **phpMyAdmin**: http://localhost:8081
+  - Server: `db`
+  - Username: `root`
+  - Password: `root`
+
+**Login:**
+- **Username**: `admin`
+- **Password**: `password`
+
+✅ **Done! You're running!**
+
+### Docker Commands Cheat Sheet
+
+```bash
+# Start services
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Stop and remove everything (including database data)
+docker-compose down -v
+
+# View running containers
+docker ps
+
+# Access PHP container shell
+docker exec -it sel_diagnostic_app bash
+
+# Access database
+docker exec -it sel_diagnostic_db mysql -u root -proot diagnostic_center
+```
+
+### Troubleshooting Docker
+
+**Port already in use:**
+```bash
+# Check what's using port 8080
+sudo lsof -i :8080
+
+# Change port in docker-compose.yml
+# Change "8080:80" to "9000:80" (or any other port)
+```
+
+**Database not initialized:**
+```bash
+# View database logs
+docker-compose logs db
+
+# Restart database service
+docker-compose restart db
+```
+
+**Reset everything:**
+```bash
+# Stop and remove all containers and volumes
+docker-compose down -v
+
+# Start fresh
+docker-compose up -d
+```
+
+---
+
+## Method 2: Using XAMPP (Traditional Setup)
 
 ### Step 1: Clone the Repository
 ```bash
@@ -154,7 +314,7 @@ This command will:
 
 ---
 
-## Method 2: Using Terminal (Linux/Mac/Windows)
+## Method 3: Using Terminal (Linux/Mac/Windows)
 
 ### Step 1: Clone the Repository
 ```bash
