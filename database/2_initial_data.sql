@@ -9,7 +9,7 @@ USE pathology_lab;
 -- ============================================
 -- ADMIN USER
 -- ============================================
--- Default admin user (password: admin123)
+-- Default admin user (password: password)
 INSERT INTO users (username, password, full_name, email, role, is_active) VALUES
 ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'System Administrator', 'admin@lab.com', 'admin', TRUE)
 ON DUPLICATE KEY UPDATE username = username;
@@ -143,4 +143,4 @@ ON DUPLICATE KEY UPDATE setting_key = setting_key;
 -- INITIAL DATA LOADED
 -- ============================================
 SELECT 'Essential data loaded successfully!' as 'Status';
-SELECT 'Default login: admin / admin123' as 'Important';
+SELECT 'Default login: admin / password' as 'Important';
