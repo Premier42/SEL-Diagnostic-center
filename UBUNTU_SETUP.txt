@@ -1,0 +1,116 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║   SEL DIAGNOSTIC CENTER - UBUNTU QUICK SETUP                              ║
+║   Native Linux Installation - Zero Configuration Required                ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+📋 REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Ubuntu 20.04+ (or any Debian-based Linux)
+✓ Internet connection
+✓ That's it! Nothing else needed!
+
+
+🚀 ONE-COMMAND SETUP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Copy and paste this into your terminal:
+
+git clone https://github.com/your-repo/SEL-Diagnostic-center.git && cd SEL-Diagnostic-center && git checkout native-linux-setup && chmod +x install.sh && ./install.sh
+
+
+Then:
+
+npm run dev
+
+
+Open browser: http://localhost:8000
+Login: admin / password
+
+
+✅ DONE! Everything is automatic!
+
+
+📦 WHAT GETS INSTALLED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ PHP 8.2 with all extensions
+✓ MariaDB 10.x database
+✓ Node.js 18.x LTS
+✓ Git version control
+✓ Composer PHP manager
+✓ All npm dependencies
+✓ Database auto-configured
+✓ Sample data imported
+
+
+⏱️ INSTALLATION TIME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+First time: 10-15 minutes (downloading packages)
+Already have packages: 2-3 minutes
+
+
+🔐 DEFAULT CREDENTIALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Application:
+  URL:      http://localhost:8000
+  Username: admin
+  Password: password
+
+Database:
+  Database: diagnostic_center
+  Username: diagnostic_user
+  Password: DiagnosticPass2024!
+
+
+⚠️ IMPORTANT: Change the admin password after first login!
+
+
+💻 DAILY USAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Start app:
+  npm run dev
+
+Stop app:
+  Ctrl+C
+
+Check database:
+  sudo systemctl status mariadb
+
+View logs:
+  tail -f storage/logs/app.log
+
+
+🔧 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Installation failed?
+  → Run ./install.sh again (it's safe to re-run)
+
+Can't connect to database?
+  → sudo systemctl restart mariadb
+  → ./install.sh (re-run installer)
+
+Port 8000 in use?
+  → Kill the process: sudo lsof -i :8000
+  → Or use different port: php -S localhost:9000 -t public
+
+npm install fails?
+  → npm cache clean --force
+  → rm -rf node_modules
+  → npm install
+
+
+📚 MORE HELP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+See README.md for comprehensive documentation
+See QUICKSTART.md for alternative setup methods
+See SETUP_GUIDE.md to compare with Docker setup
+
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║   Questions? Contact the development team                                 ║
+╚═══════════════════════════════════════════════════════════════════════════╝
