@@ -84,12 +84,24 @@ DB_PASS=
    - ✅ Wait for success message
 
 ### Step 6: Move Project to XAMPP
-Move your project folder to XAMPP's htdocs:
-```bash
-# Windows
-move SEL-Diagnostic-center C:\xampp\htdocs\
+Move your project folder to XAMPP's htdocs directory:
 
-# Or just copy the folder manually to C:\xampp\htdocs\
+**Windows:**
+```bash
+move SEL-Diagnostic-center C:\xampp\htdocs\
+# Or copy manually to: C:\xampp\htdocs\
+```
+
+**Linux:**
+```bash
+sudo mv SEL-Diagnostic-center /opt/lampp/htdocs/
+# Or copy manually to: /opt/lampp/htdocs/
+```
+
+**Mac:**
+```bash
+sudo mv SEL-Diagnostic-center /Applications/XAMPP/htdocs/
+# Or copy manually to: /Applications/XAMPP/htdocs/
 ```
 
 ### Step 7: Run the Application
@@ -139,7 +151,30 @@ C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\3_demo_data.sql
 ```
 > Press Enter when asked for password (XAMPP default has no password)
 
-**For Linux/Mac:**
+**For Linux (XAMPP/LAMPP):**
+```bash
+# Create database
+/opt/lampp/bin/mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Import files in order
+/opt/lampp/bin/mysql -u root -p pathology_lab < database/1_schema.sql
+/opt/lampp/bin/mysql -u root -p pathology_lab < database/2_initial_data.sql
+/opt/lampp/bin/mysql -u root -p pathology_lab < database/3_demo_data.sql
+```
+> XAMPP on Linux is installed in `/opt/lampp/`
+
+**For Mac (XAMPP):**
+```bash
+# Create database
+/Applications/XAMPP/bin/mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Import files in order
+/Applications/XAMPP/bin/mysql -u root -p pathology_lab < database/1_schema.sql
+/Applications/XAMPP/bin/mysql -u root -p pathology_lab < database/2_initial_data.sql
+/Applications/XAMPP/bin/mysql -u root -p pathology_lab < database/3_demo_data.sql
+```
+
+**For Linux/Mac (Native MySQL - not XAMPP):**
 ```bash
 # Create database
 mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
@@ -159,8 +194,13 @@ php -S localhost:8000 -t public
 Then open: `http://localhost:8000`
 
 **Option B: XAMPP/Apache**
-- Move project to `C:\xampp\htdocs\` (Windows) or `/var/www/html/` (Linux)
-- Open: `http://localhost/SEL-Diagnostic-center/public`
+
+Move project to XAMPP directory:
+- **Windows**: `C:\xampp\htdocs\`
+- **Linux**: `/opt/lampp/htdocs/`
+- **Mac**: `/Applications/XAMPP/htdocs/`
+
+Then open browser: `http://localhost/SEL-Diagnostic-center/public`
 
 ### Step 5: Login
 - **Username**: `admin`
