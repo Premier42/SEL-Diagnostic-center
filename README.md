@@ -16,194 +16,284 @@ A modern laboratory management system built with PHP and MySQL for diagnostic ce
 
 ## 🛠 Technology Stack
 
-- **Backend**: PHP 7.4+ with MVC architecture
-- **Database**: MySQL 5.7+
+- **Backend**: PHP 8.2 with MVC architecture
+- **Database**: MariaDB 10.11
 - **Frontend**: Bootstrap 5.3, FontAwesome, JavaScript
-- **Build Tool**: Vite 5 (hot reload, fast builds)
-
-## ⚡ Quick Start (TL;DR)
-
-### 🐳 Using Docker (Easiest - Recommended!)
-
-```bash
-# Clone the repo
-git clone <repo-url>
-cd SEL-Diagnostic-center
-
-# Copy environment file (optional - Docker uses defaults)
-cp .env.example .env
-
-# Start everything with one command!
-docker-compose up -d
-
-# Open http://localhost:8080
-# Login: admin / password
-# phpMyAdmin: http://localhost:8081
-```
-
-That's it! No XAMPP, no PHP installation, no MySQL setup needed! 🎉
-
-### 📦 Traditional Setup (XAMPP)
-
-```bash
-# Clone and install
-git clone <repo-url>
-cd SEL-Diagnostic-center
-npm install
-
-# Setup database
-cp .env.example .env
-# Edit .env with your DB credentials
-# Create database and import SQL files (see detailed steps below)
-
-# Run the app
-npm run dev
-
-# Open http://localhost:8000
-# Login: admin / password
-```
-
-## 📦 Installation
-
-### Prerequisites
-
-**Docker Method (Easiest):**
-- Docker Desktop (Windows/Mac) or Docker Engine (Linux)
-- That's it! Everything else runs in containers.
-
-**Traditional Method:**
-- PHP 7.4+ (with MySQL extension)
-- MySQL 5.7+
-- Node.js 18+ and npm
-- XAMPP (recommended) or any web server
+- **Deployment**: Docker + Docker Compose
 
 ---
 
-## Method 1: Using Docker (Easiest - Zero Setup!)
+## 🐳 Docker Setup (Step-by-Step)
 
-### What You Get
-- ✅ PHP 8.2 + Apache (pre-configured)
-- ✅ MariaDB 10.11 (auto-imports database)
-- ✅ phpMyAdmin (database management)
-- ✅ All dependencies installed
-- ✅ Proper networking between services
-- ✅ Volume persistence (data survives restarts)
+### Prerequisites
+
+**You only need Docker installed. Nothing else!**
+
+- **Windows/Mac**: [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
+- **Linux**: See Step 1 below
+
+---
 
 ### Step 1: Install Docker
 
-**Windows/Mac:**
-1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop)
-2. Install and launch it
-3. Wait for Docker to start (whale icon in system tray)
+#### **Windows/Mac:**
 
-**Linux:**
+1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop)
+2. Run the installer
+3. Launch Docker Desktop
+4. Wait until you see the whale icon in your system tray
+5. Docker is ready when the icon stops animating
+
+#### **Linux:**
+
 ```bash
-# Install Docker
+# Download and run the Docker installation script
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Install Docker Compose
+# Install Docker Compose plugin
+sudo apt-get update
 sudo apt-get install docker-compose-plugin
 
-# Add your user to docker group
+# Add your user to the docker group (avoid using sudo)
 sudo usermod -aG docker $USER
+
+# Activate the group changes
 newgrp docker
+
+# Verify installation
+docker --version
+docker compose version
 ```
 
-### Step 2: Clone Repository
+---
+
+### Step 2: Get the Code
+
 ```bash
+# Clone the repository
 git clone https://github.com/your-repo/SEL-Diagnostic-center.git
+
+# Navigate into the project folder
 cd SEL-Diagnostic-center
+
+# Switch to docker-setup branch
+git checkout docker-setup
 ```
 
-### Step 3: Configure Environment (Optional)
-```bash
-cp .env.example .env
-```
-> Docker works with default settings! Only edit `.env` if you want to customize.
+---
 
-### Step 4: Start the Application
+### Step 3: Start the Application
+
 ```bash
+# Start all services (app, database, phpMyAdmin)
 docker-compose up -d
 ```
 
-This single command:
-- ✅ Builds the PHP/Apache container
-- ✅ Downloads MariaDB and phpMyAdmin images
-- ✅ Creates network and volumes
-- ✅ Imports `diagnostic_center.sql` automatically
-- ✅ Starts all services in the background
+**What happens:**
+- 🔄 Downloads Docker images (PHP, MariaDB, phpMyAdmin) - **only on first run**
+- 🏗️ Builds the application container
+- 🗄️ Creates the database
+- 📥 Automatically imports all SQL data (schema + initial data + demo data)
+- 🚀 Starts all services in the background
 
-**First run takes 2-3 minutes to download images. Subsequent starts take <10 seconds!**
+**First run**: 2-3 minutes (downloading images)
+**Subsequent runs**: <10 seconds
+
+---
+
+### Step 4: Wait for Database Initialization
+
+```bash
+# Watch the logs to see when database is ready
+docker-compose logs -f db
+```
+
+Look for this message:
+```
+sel_diagnostic_db | ready for connections
+```
+
+Then press `Ctrl+C` to exit logs.
+
+**Or just wait 30 seconds** - that's usually enough!
+
+---
 
 ### Step 5: Access the Application
 
-Wait about 30 seconds for database initialization, then:
+Open your browser and go to:
 
-- **Main App**: http://localhost:8080
-- **phpMyAdmin**: http://localhost:8081
-  - Server: `db`
-  - Username: `root`
-  - Password: `root`
+#### **Main Application**
+- URL: **http://localhost:8080**
+- Username: **admin**
+- Password: **password**
 
-**Login:**
-- **Username**: `admin`
-- **Password**: `password`
+#### **phpMyAdmin (Database Management)**
+- URL: **http://localhost:8081**
+- Server: **db**
+- Username: **root**
+- Password: **root**
 
-✅ **Done! You're running!**
+---
 
-### Docker Commands Cheat Sheet
+### Step 6: Verify Everything Works
 
+1. Login with `admin` / `password`
+2. You should see the dashboard
+3. Check the navigation menu - all features should be accessible
+4. Database should have sample data (invoices, patients, tests)
+
+✅ **You're all set!**
+
+---
+
+## 📋 Daily Usage
+
+### Start the Application
 ```bash
-# Start services
 docker-compose up -d
+```
 
-# Stop services
+### Stop the Application
+```bash
 docker-compose down
+```
 
-# View logs
+### Restart Services
+```bash
+docker-compose restart
+```
+
+### View Logs (if something goes wrong)
+```bash
+# All services
 docker-compose logs -f
 
-# Restart services
-docker-compose restart
+# Just the app
+docker-compose logs -f app
 
-# Stop and remove everything (including database data)
-docker-compose down -v
+# Just the database
+docker-compose logs -f db
+```
 
-# View running containers
+### Check Running Containers
+```bash
 docker ps
-
-# Access PHP container shell
-docker exec -it sel_diagnostic_app bash
-
-# Access database
-docker exec -it sel_diagnostic_db mysql -u root -proot diagnostic_center
 ```
 
-### Troubleshooting Docker
+You should see 3 containers:
+- `sel_diagnostic_app` (PHP/Apache)
+- `sel_diagnostic_db` (MariaDB)
+- `sel_phpmyadmin` (Database UI)
 
-**Port already in use:**
+---
+
+## 🔧 Troubleshooting
+
+### ❌ Port 8080 Already in Use
+
+**Error:** `Bind for 0.0.0.0:8080 failed: port is already allocated`
+
+**Solution:**
+
+1. Open `docker-compose.yml`
+2. Find this line:
+   ```yaml
+   ports:
+     - "8080:80"
+   ```
+3. Change `8080` to any free port (e.g., `9000`):
+   ```yaml
+   ports:
+     - "9000:80"
+   ```
+4. Save and restart:
+   ```bash
+   docker-compose down
+   docker-compose up -d
+   ```
+5. Access the app at `http://localhost:9000`
+
+---
+
+### ❌ Database Connection Failed
+
+**Error:** Can't connect to database
+
+**Solution:**
+
 ```bash
-# Check what's using port 8080
-sudo lsof -i :8080
-
-# Change port in docker-compose.yml
-# Change "8080:80" to "9000:80" (or any other port)
-```
-
-**Database not initialized:**
-```bash
-# View database logs
+# Check database logs
 docker-compose logs db
 
 # Restart database service
 docker-compose restart db
+
+# If still not working, reset everything
+docker-compose down -v
+docker-compose up -d
 ```
 
-**Reset everything:**
+---
+
+### ❌ Login Not Working (admin/password fails)
+
+**Cause:** Database not initialized properly
+
+**Solution:**
+
 ```bash
-# Stop and remove all containers and volumes
+# Stop and remove everything (including volumes)
 docker-compose down -v
+
+# Start fresh - database will re-import
+docker-compose up -d
+
+# Wait 30 seconds for initialization
+```
+
+---
+
+### ❌ Changes to Code Not Showing
+
+**Cause:** Browser cache or container needs restart
+
+**Solution:**
+
+```bash
+# Restart the app container
+docker-compose restart app
+
+# Or hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)
+```
+
+---
+
+### ❌ Docker Not Running
+
+**Error:** `Cannot connect to the Docker daemon`
+
+**Solution:**
+
+- **Windows/Mac**: Launch Docker Desktop and wait for it to start
+- **Linux**:
+  ```bash
+  sudo systemctl start docker
+  ```
+
+---
+
+### 🔄 Start Fresh (Nuclear Option)
+
+If everything is broken and you want to start over:
+
+```bash
+# Stop and remove all containers, networks, and volumes
+docker-compose down -v
+
+# Remove any leftover images
+docker system prune -a
 
 # Start fresh
 docker-compose up -d
@@ -211,335 +301,125 @@ docker-compose up -d
 
 ---
 
-## Method 2: Using XAMPP (Traditional Setup)
+## 🎯 What's Included
 
-### Step 1: Clone the Repository
-```bash
-git clone https://github.com/your-repo/SEL-Diagnostic-center.git
-cd SEL-Diagnostic-center
-```
+### Services Running
 
-### Step 2: Install Dependencies
-```bash
-npm install
-```
+1. **Application Container** (`sel_diagnostic_app`)
+   - PHP 8.2 + Apache
+   - All PHP extensions installed
+   - Port: 8080
 
-### Step 3: Setup Environment
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
+2. **Database Container** (`sel_diagnostic_db`)
+   - MariaDB 10.11
+   - Auto-imports `diagnostic_center.sql` on first run
+   - Port: 3307 (if you need external access)
 
-Edit `.env` file and set database credentials:
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=pathology_lab
-DB_USER=root
-DB_PASS=
-```
-> **Note**: XAMPP's default MySQL has no password (leave `DB_PASS` empty)
+3. **phpMyAdmin Container** (`sel_phpmyadmin`)
+   - Web-based database management
+   - Port: 8081
 
-### Step 4: Start XAMPP
-1. Open **XAMPP Control Panel**
-2. Start **Apache** and **MySQL** modules
-3. Wait until both show green "Running" status
+### Data Persistence
 
-### Step 5: Create Database
-1. Open browser → Go to `http://localhost/phpmyadmin`
-2. Click **"New"** in left sidebar
-3. Database name: `pathology_lab`
-4. Collation: Select `utf8mb4_unicode_ci`
-5. Click **"Create"**
+Your data is stored in Docker volumes and **survives container restarts**:
+- Database data: `db_data` volume
+- Application files: Mounted from your project folder
 
-### Step 6: Import Database Files
-1. Click on **`pathology_lab`** database (left sidebar)
-2. Click **"Import"** tab
-3. Import these files **in exact order** (one at a time):
+**Even if you run `docker-compose down`, your data is safe!**
 
-   **File 1:** `1_schema.sql`
-   - Click "Choose File" → Select `database/1_schema.sql` → Click "Import"
-   - ✅ Wait for success message
-
-   **File 2:** `2_initial_data.sql`
-   - Click "Choose File" → Select `database/2_initial_data.sql` → Click "Import"
-   - ✅ Wait for success message
-
-   **File 3 (Optional):** `3_demo_data.sql`
-   - Only import if you want sample data (invoices, patients, reports)
-   - Click "Choose File" → Select `database/3_demo_data.sql` → Click "Import"
-   - ✅ Wait for success message
-
-### Step 7: Move Project to XAMPP
-Move your project folder to XAMPP's htdocs directory:
-
-**Windows:**
-```bash
-move SEL-Diagnostic-center C:\xampp\htdocs\
-# Or copy manually to: C:\xampp\htdocs\
-```
-
-**Linux:**
-```bash
-sudo mv SEL-Diagnostic-center /opt/lampp/htdocs/
-# Or copy manually to: /opt/lampp/htdocs/
-```
-
-**Mac:**
-```bash
-sudo mv SEL-Diagnostic-center /Applications/XAMPP/htdocs/
-# Or copy manually to: /Applications/XAMPP/htdocs/
-```
-
-### Step 8: Run the Application
-
-Start the development server:
-```bash
-npm run dev
-```
-
-This command will:
-- Start Vite dev server (port 5173) for hot reload
-- Start PHP server (port 8000)
-- Both run concurrently
-
-**Open browser:**
-- Go to: `http://localhost:8000`
-
-**Login:**
-- **Username**: `admin`
-- **Password**: `password`
-
-✅ **Done! You should now see the dashboard with hot reload support!**
+**To delete data**: `docker-compose down -v` (the `-v` flag removes volumes)
 
 ---
 
-## Method 3: Using Terminal (Linux/Mac/Windows)
-
-### Step 1: Clone the Repository
-```bash
-git clone https://github.com/your-repo/SEL-Diagnostic-center.git
-cd SEL-Diagnostic-center
-```
-
-### Step 2: Install Dependencies
-```bash
-npm install
-```
-
-### Step 3: Setup Environment
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and configure database:
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=pathology_lab
-DB_USER=root
-DB_PASS=your_password
-```
-
-### Step 4: Create Database and Import Files
-
-**For Windows (XAMPP):**
-```bash
-# Create database
-C:\xampp\mysql\bin\mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Import files in order
-C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\1_schema.sql
-C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\2_initial_data.sql
-C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\3_demo_data.sql
-```
-> Press Enter when asked for password (XAMPP default has no password)
-
-**For Linux (XAMPP/LAMPP):**
-```bash
-# Create database
-/opt/lampp/bin/mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Import files in order
-/opt/lampp/bin/mysql -u root -p pathology_lab < database/1_schema.sql
-/opt/lampp/bin/mysql -u root -p pathology_lab < database/2_initial_data.sql
-/opt/lampp/bin/mysql -u root -p pathology_lab < database/3_demo_data.sql
-```
-> XAMPP on Linux is installed in `/opt/lampp/`
-
-**For Mac (XAMPP):**
-```bash
-# Create database
-/Applications/XAMPP/bin/mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Import files in order
-/Applications/XAMPP/bin/mysql -u root -p pathology_lab < database/1_schema.sql
-/Applications/XAMPP/bin/mysql -u root -p pathology_lab < database/2_initial_data.sql
-/Applications/XAMPP/bin/mysql -u root -p pathology_lab < database/3_demo_data.sql
-```
-
-**For Linux/Mac (Native MySQL - not XAMPP):**
-```bash
-# Create database
-mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Import files in order
-mysql -u root -p pathology_lab < database/1_schema.sql
-mysql -u root -p pathology_lab < database/2_initial_data.sql
-mysql -u root -p pathology_lab < database/3_demo_data.sql
-```
-
-### Step 5: Run the Application
-
-**Option A: Vite Dev Server (Recommended - with hot reload)**
-```bash
-npm run dev
-```
-This starts both Vite (port 5173) and PHP (port 8000) servers.
-
-Then open: `http://localhost:8000`
-
-**Option B: PHP Server Only (without Vite)**
-```bash
-php -S localhost:8000 -t public
-```
-Then open: `http://localhost:8000`
-
-**Option C: XAMPP/Apache**
-
-Move project to XAMPP directory:
-- **Windows**: `C:\xampp\htdocs\`
-- **Linux**: `/opt/lampp/htdocs/`
-- **Mac**: `/Applications/XAMPP/htdocs/`
-
-Then run: `npm run dev` or just access `http://localhost/SEL-Diagnostic-center/public`
-
-### Step 6: Login
-- **Username**: `admin`
-- **Password**: `password`
-
-✅ **Done! You should now see the dashboard.**
-
-> 💡 **Tip**: Use `npm run dev` for the best development experience with hot reload!
-
----
-
-## 📊 Database Files Explained
-
-| File | Description | Required? |
-|------|-------------|-----------|
-| `1_schema.sql` | Creates all database tables | ✅ Yes |
-| `2_initial_data.sql` | Admin user, tests catalog, system config | ✅ Yes |
-| `3_demo_data.sql` | Sample invoices, patients, reports | ⚠️ Optional |
-
----
-
-## 🔧 Troubleshooting
-
-### ❌ "System temporarily unavailable" Error
-
-**Cause**: Database not configured properly
-
-**Solution**:
-1. ✅ Check `.env` file has correct database credentials
-2. ✅ Verify MySQL is running (XAMPP Control Panel)
-3. ✅ Confirm database `pathology_lab` exists in phpMyAdmin
-4. ✅ Make sure all 3 SQL files imported successfully
-
-**Test Database Connection:**
-```bash
-# Windows
-C:\xampp\mysql\bin\mysql -u root -p pathology_lab -e "SHOW TABLES;"
-
-# Linux/Mac
-mysql -u root -p pathology_lab -e "SHOW TABLES;"
-```
-You should see 15+ tables listed.
-
-### ❌ Import Failed / Foreign Key Error
-
-**Solution**: Drop database and start over
-```sql
-DROP DATABASE pathology_lab;
-CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-Then re-import files in exact order: 1 → 2 → 3
-
-### ❌ Page Not Found / 404 Error
-
-**Solution**: Make sure you're accessing the `/public` directory:
-- ✅ `http://localhost/SEL-Diagnostic-center/public`
-- ❌ `http://localhost/SEL-Diagnostic-center` (won't work)
-
-### ❌ Can't Login with admin/password
-
-**Cause**: Database not imported or initial_data.sql skipped
-
-**Solution**: Re-import `database/2_initial_data.sql`
-
-### ❌ Using XAMPP with MariaDB instead of MySQL
-
-**If your XAMPP came with MariaDB**, don't worry - it's fully compatible! MariaDB is a drop-in replacement for MySQL.
-
-**Check which one you have:**
-```bash
-# Windows
-C:\xampp\mysql\bin\mysql --version
-
-# Linux
-/opt/lampp/bin/mysql --version
-
-# You'll see either "MySQL" or "MariaDB" in the output
-```
-
-**All commands work the same:**
-- phpMyAdmin works identically
-- SQL import commands are the same
-- `.env` configuration is identical (use same DB settings)
-- No code changes needed
-
-**Note**: MariaDB is actually MySQL-compatible and often faster. Your app will work perfectly! ✅
-
----
-
-## 📝 Default Login Credentials
-
-After installation, use these credentials:
-
-- **Username**: `admin`
-- **Password**: `password`
-
-⚠️ **Change the password immediately after first login!**
-
----
-
-## 🎯 Project Structure
+## 🗂️ Project Structure
 
 ```
 SEL-Diagnostic-center/
+├── Dockerfile                   # PHP/Apache container config
+├── docker-compose.yml          # Services orchestration
+├── .dockerignore               # Files to exclude from build
+├── diagnostic_center.sql       # Combined database dump (auto-imported)
 ├── database/
-│   ├── 1_schema.sql          # Database structure
-│   ├── 2_initial_data.sql    # Essential data
-│   └── 3_demo_data.sql       # Sample data (optional)
+│   ├── 1_schema.sql           # Database structure
+│   ├── 2_initial_data.sql     # Essential data
+│   └── 3_demo_data.sql        # Sample data
 ├── public/
-│   └── index.php             # Entry point
+│   └── index.php              # Application entry point
 ├── src/
-│   └── Controllers/          # Application logic
-├── views/                    # HTML templates
-├── .env.example              # Environment template
-├── .gitignore
-├── bootstrap.php             # App initialization
-└── README.md
+│   └── Controllers/           # Application logic
+├── views/                     # HTML templates
+├── .env.example               # Environment variables template
+└── README.md                  # This file
+```
+
+---
+
+## 📝 Default Credentials
+
+**Application Login:**
+- Username: `admin`
+- Password: `password`
+
+**Database (phpMyAdmin):**
+- Server: `db`
+- Username: `root`
+- Password: `root`
+- Database: `diagnostic_center`
+
+⚠️ **Change the admin password after first login!**
+
+---
+
+## 💻 Advanced Docker Commands
+
+### Access Container Shell
+
+```bash
+# PHP container
+docker exec -it sel_diagnostic_app bash
+
+# Once inside, you can run PHP commands:
+php -v
+ls -la /var/www/html
+```
+
+### Access Database Directly
+
+```bash
+# MySQL command line
+docker exec -it sel_diagnostic_db mysql -u root -proot diagnostic_center
+
+# Once inside, run SQL:
+SHOW TABLES;
+SELECT * FROM users;
+```
+
+### View Container Resource Usage
+
+```bash
+docker stats
+```
+
+### Export Database Backup
+
+```bash
+docker exec sel_diagnostic_db mysqldump -u root -proot diagnostic_center > backup.sql
+```
+
+### Import Database Backup
+
+```bash
+cat backup.sql | docker exec -i sel_diagnostic_db mysql -u root -proot diagnostic_center
 ```
 
 ---
 
 ## 🤝 Contributing
 
-1. Follow PSR-4 standards
-2. Add CSRF protection to all forms
-3. Validate all inputs
-4. Update documentation
+1. Make changes to the code (they'll reflect immediately - volume is mounted)
+2. Test your changes at `http://localhost:8080`
+3. Commit and push as usual
+4. No need to rebuild Docker unless you change `Dockerfile` or `docker-compose.yml`
 
 ---
 
@@ -551,11 +431,11 @@ Proprietary software for SEL Diagnostic Center
 
 ## 🆘 Need Help?
 
-1. Check logs: `storage/logs/app.log`
-2. Verify database connection
-3. Review this README
-4. Contact development team
+1. **Check logs**: `docker-compose logs -f`
+2. **Restart services**: `docker-compose restart`
+3. **Start fresh**: `docker-compose down -v && docker-compose up -d`
+4. **Contact the development team**
 
 ---
 
-**SEL Diagnostic Center** - Modern Laboratory Management System
+**SEL Diagnostic Center** - Modern Laboratory Management System 🏥
