@@ -45,24 +45,35 @@ npm run dev
 
 ## What Gets Installed?
 
-- **PHP 8.2** with all extensions
+**System Tools:**
+- build-essential, curl, wget, git, unzip, python3
+
+**Web Stack:**
+- **PHP 8.2** with PDO, MySQL, mbstring, XML, cURL, ZIP, GD, bcmath, intl, soap, opcache
 - **MariaDB 10.x** database server
-- **Node.js 18.x** LTS
-- **Git** version control
+- **Node.js 18.x** LTS with npm
 - **Composer** PHP package manager
-- **npm packages** for Vite and frontend tools
+
+**Application:**
+- All npm dependencies (Vite, frontend tools)
+- Database automatically created and imported
+- Permissions configured
 
 ---
 
 ## Fresh Ubuntu?
 
-Works on freshly installed Ubuntu/Debian! No prerequisites needed.
+✅ Works on **brand new Ubuntu** with NOTHING installed!
+✅ Works on existing Ubuntu installations too!
 
-The installer will ask for:
-1. Your sudo password (for system installations)
-2. Confirmation to proceed
+The installer will:
+1. Detect your Ubuntu version
+2. Ask for confirmation to proceed
+3. Request your sudo password (for system installations)
+4. Install everything automatically
+5. Verify all components are working
 
-Everything else is automatic!
+**No manual configuration needed!**
 
 ---
 
