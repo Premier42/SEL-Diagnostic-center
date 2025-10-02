@@ -23,41 +23,126 @@ A modern laboratory management system built with PHP and MySQL for diagnostic ce
 
 ---
 
-## 🐧 Linux Native Setup (Step-by-Step)
+## ⚡ Quick Start - TL;DR
 
-This guide will walk you through installing everything needed to run the application natively on Linux (Ubuntu/Debian-based distributions).
+### 🎯 One-Command Setup (Easiest!)
 
-### Prerequisites
+**Copy and paste this into your terminal:**
 
-**What you'll install:**
-- PHP 8.1+ with extensions
-- MySQL 8.0+ or MariaDB 10.6+
-- Node.js 18+ and npm
-- Git
-- Composer (PHP package manager)
+```bash
+git clone https://github.com/your-repo/SEL-Diagnostic-center.git && cd SEL-Diagnostic-center && git checkout native-linux-setup && chmod +x install.sh && ./install.sh
+```
 
-**Supported Linux Distributions:**
+**Then start the app:**
+```bash
+npm run dev
+```
+
+**Open:** http://localhost:8000
+**Login:** admin / password
+
+✅ **Done!** Everything installs automatically!
+
+---
+
+### 📦 Already Have the Repo?
+
+```bash
+cd SEL-Diagnostic-center
+git checkout native-linux-setup
+./install.sh
+npm run dev
+```
+
+---
+
+## 🐧 Full Linux Native Setup Guide
+
+This guide provides detailed information about the automated installation process.
+
+### What Gets Installed Automatically
+
+The `install.sh` script installs everything you need:
+
+- ✅ **PHP 8.2** with all required extensions
+- ✅ **MariaDB 10.x** database server
+- ✅ **Node.js 18.x** LTS with npm
+- ✅ **Git** version control
+- ✅ **Composer** PHP package manager
+- ✅ **Database** automatically configured and imported
+- ✅ **Permissions** set correctly
+
+### Supported Linux Distributions
+
 - Ubuntu 20.04+
+- Ubuntu 22.04+ ⭐ Recommended
 - Debian 11+
 - Linux Mint 20+
 - Pop!_OS 20.04+
 - Other Debian-based distros
 
+Works on **fresh or existing** installations!
+
 ---
 
-### Step 1: Update System
+## 📖 Detailed Installation Steps
+
+### Method 1: Automated Installer (Recommended)
+
+#### Step 1: Clone Repository
 
 ```bash
-# Update package list
-sudo apt update
+git clone https://github.com/your-repo/SEL-Diagnostic-center.git
+cd SEL-Diagnostic-center
+git checkout native-linux-setup
+```
 
-# Upgrade existing packages
+#### Step 2: Run Installer
+
+```bash
+./install.sh
+```
+
+The installer will:
+1. Ask for confirmation
+2. Request your sudo password
+3. Install all dependencies (PHP, MariaDB, Node.js, etc.)
+4. Configure the database automatically
+5. Import all data
+6. Set up permissions
+
+**Time:** 10-15 minutes (depending on internet speed)
+
+#### Step 3: Start the Application
+
+```bash
+npm run dev
+```
+
+#### Step 4: Access the App
+
+Open http://localhost:8000
+
+**Login:**
+- Username: `admin`
+- Password: `password`
+
+✅ **You're done!**
+
+---
+
+### Method 2: Manual Installation (Advanced)
+
+If you prefer to install components manually:
+
+#### Step 1: Update System
+
+```bash
+sudo apt update
 sudo apt upgrade -y
 ```
 
----
-
-### Step 2: Install PHP 8.1+
+#### Step 2: Install PHP 8.2
 
 ```bash
 # Add PHP repository (if needed for latest version)
