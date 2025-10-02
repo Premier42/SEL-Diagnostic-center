@@ -62,3 +62,8 @@ cookies.txt
 
 # Node modules (if using)
 node_modules/
+package-lock.json
+
+# Vite build output
+public/dist/
+.vite/
