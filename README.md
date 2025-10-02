@@ -97,7 +97,7 @@ move SEL-Diagnostic-center C:\xampp\htdocs\
 2. Go to: `http://localhost/SEL-Diagnostic-center/public`
 3. Login with default credentials:
    - **Username**: `admin`
-   - **Password**: `admin123`
+   - **Password**: `password`
 
 ✅ **Done! You should now see the dashboard.**
 
@@ -164,7 +164,7 @@ Then open: `http://localhost:8000`
 
 ### Step 5: Login
 - **Username**: `admin`
-- **Password**: `admin123`
+- **Password**: `password`
 
 ✅ **Done! You should now see the dashboard.**
 
@@ -217,7 +217,7 @@ Then re-import files in exact order: 1 → 2 → 3
 - ✅ `http://localhost/SEL-Diagnostic-center/public`
 - ❌ `http://localhost/SEL-Diagnostic-center` (won't work)
 
-### ❌ Can't Login with admin/admin123
+### ❌ Can't Login with admin/password
 
 **Cause**: Database not imported or initial_data.sql skipped
 
@@ -230,7 +230,7 @@ Then re-import files in exact order: 1 → 2 → 3
 After installation, use these credentials:
 
 - **Username**: `admin`
-- **Password**: `admin123`
+- **Password**: `password`
 
 ⚠️ **Change the password immediately after first login!**
 
