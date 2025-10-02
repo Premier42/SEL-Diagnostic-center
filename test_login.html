@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login - SEL Diagnostic Center</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>SEL Diagnostic Center - Test Login</h2>
+
+    <div class="info">
+        <strong>Default Credentials:</strong><br>
+        Username: admin<br>
+        Password: password
+    </div>
+
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Username" value="admin">
+        <input type="password" id="password" placeholder="Password" value="password">
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Logging in...';
+
+            try {
+                // First, get the login page to extract CSRF token
+                const loginPage = await fetch('/');
+                const html = await text();
+
+                // Extract CSRF token
+                const match = html.match(/csrf_token.*?value=['"]([^'"]+)['"]/);
+                const csrfToken = match ? match[1] : '';
+
+                console.log('CSRF Token:', csrfToken);
+
+                // Now submit login
+                const formData = new FormData();
+                formData.append('username', document.getElementById('username').value);
+                formData.append('password', document.getElementById('password').value);
+                formData.append('csrf_token', csrfToken);
+
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    body: formData,
+                    redirect: 'manual'
+                });
+
+                console.log('Response status:', response.status);
+
+                if (response.type === 'opaqueredirect' || response.status === 302 || response.status === 0) {
+                    // Check if redirected to dashboard
+                    const dashResponse = await fetch('/dashboard');
+                    if (dashResponse.ok) {
+                        resultDiv.innerHTML = '<div style="color: green;">✓ Login successful! Redirecting...</div>';
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1000);
+                    } else {
+                        resultDiv.innerHTML = '<div style="color: orange;">Login attempted, checking...</div>';
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 500);
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div style="color: red;">✗ Login failed. Check credentials.</div>';
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = '<div style="color: red;">Error: ' + error.message + '</div>';
+                console.error('Login error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
