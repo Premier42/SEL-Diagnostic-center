@@ -317,6 +317,29 @@ Then re-import files in exact order: 1 → 2 → 3
 
 **Solution**: Re-import `database/2_initial_data.sql`
 
+### ❌ Using XAMPP with MariaDB instead of MySQL
+
+**If your XAMPP came with MariaDB**, don't worry - it's fully compatible! MariaDB is a drop-in replacement for MySQL.
+
+**Check which one you have:**
+```bash
+# Windows
+C:\xampp\mysql\bin\mysql --version
+
+# Linux
+/opt/lampp/bin/mysql --version
+
+# You'll see either "MySQL" or "MariaDB" in the output
+```
+
+**All commands work the same:**
+- phpMyAdmin works identically
+- SQL import commands are the same
+- `.env` configuration is identical (use same DB settings)
+- No code changes needed
+
+**Note**: MariaDB is actually MySQL-compatible and often faster. Your app will work perfectly! ✅
+
 ---
 
 ## 📝 Default Login Credentials
