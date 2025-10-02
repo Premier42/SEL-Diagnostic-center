@@ -1,324 +1,284 @@
 # SEL Diagnostic Center - Laboratory Management System
 
-A modern, feature-rich laboratory management system built with PHP and MySQL, designed specifically for diagnostic centers and pathology laboratories.
+A modern laboratory management system built with PHP and MySQL for diagnostic centers and pathology laboratories.
 
 ## 🚀 Features
 
-### Core Features
-- **Modern UI/UX**: Professional gradient design with Bootstrap 5
-- **Responsive Design**: Mobile-first approach with touch-friendly interfaces
-- **Real-time Dashboard**: Live statistics and performance metrics
-- **Secure Authentication**: CSRF protection and session management
-- **Bengali Localization**: Support for local language and currency (৳)
-
-### Medical Operations
-- **Invoice Management**: Create, track, and manage patient invoices with PDF generation
-- **Test Management**: Comprehensive laboratory test catalog with edit functionality
-- **Patient Records**: Complete patient information management
-- **Payment Tracking**: Support for multiple payment methods with real-time updates
-- **Report Generation**: Professional test reports with lab tech data entry
-- **Doctor Management**: Maintain referring physician database
-
-### Administrative Features
-- **User Management**: Role-based access control (Admin, Staff, Technician)
-- **Audit Logging**: Complete activity tracking with 30+ log entries
-- **SMS Notifications**: Bangladesh SMS integration via SMS.NET.BD
+- **Invoice & Patient Management**: Create invoices, track payments, manage patient records
+- **Test Management**: 35+ laboratory tests with parameters and normal ranges
+- **Report Generation**: Lab tech data entry, professional PDF reports
+- **User Management**: Role-based access (Admin, Staff, Technician)
+- **SMS Notifications**: Bangladesh SMS integration (SMS.NET.BD)
 - **Inventory Management**: Track reagents, consumables, and lab supplies
-- **Lab Tech Interface**: Data entry for test results and reports
-- **Search & Filtering**: Advanced search across all modules
-- **Data Export**: CSV export capabilities
-- **Performance Analytics**: Real-time system metrics
+- **Audit Logging**: Complete activity tracking
+- **Doctor Management**: Maintain referring physician database
+- **Bengali Support**: Local language and currency (৳)
 
 ## 🛠 Technology Stack
 
-- **Backend**: PHP 8.4+ with modern OOP architecture
-- **Database**: MySQL 8.0+ with UTF-8mb4 support
-- **Frontend**: Bootstrap 5.3, FontAwesome 6.4, vanilla JavaScript
-- **Architecture**: Clean MVC pattern with service layer
-- **Security**: CSRF protection, input validation, XSS prevention
+- **Backend**: PHP 7.4+ with MVC architecture
+- **Database**: MySQL 5.7+
+- **Frontend**: Bootstrap 5.3, FontAwesome, JavaScript
 
-## 📁 Project Structure
-
-```
-├── src/                    # Application source code
-│   └── Controllers/        # Request handlers
-│       ├── AuthController.php
-│       ├── DashboardController.php
-│       ├── InvoiceController.php
-│       ├── TestController.php
-│       ├── ReportController.php
-│       ├── UserController.php
-│       ├── DoctorController.php
-│       ├── AuditController.php
-│       ├── InventoryController.php
-│       └── SmsController.php
-├── views/                 # View templates
-│   ├── auth/              # Authentication views
-│   ├── dashboard/         # Dashboard components
-│   ├── invoices/          # Invoice management (with PDF)
-│   ├── tests/             # Test management (CRUD)
-│   ├── reports/           # Lab reports and data entry
-│   ├── users/             # User management
-│   ├── doctors/           # Doctor management
-│   ├── audit/             # Audit log viewer
-│   ├── inventory/         # Inventory management
-│   ├── sms/               # SMS dashboard
-│   └── errors/            # Error pages
-├── public/                # Web root directory
-│   ├── index.php          # Application entry point
-│   └── js/                # JavaScript files
-│       └── phone-formatter.js  # Bangladesh phone auto-formatter
-├── config/                # Configuration files
-├── database/              # Database schemas and seed data
-│   ├── core_schema.sql
-│   ├── medical_schema.sql
-│   ├── invoice_schema.sql
-│   ├── sms_schema.sql
-│   ├── audit_schema.sql
-│   ├── inventory_schema.sql
-│   └── seed_data.sql
-├── .env                   # Environment configuration (gitignored)
-├── .env.example           # Environment template
-├── .gitignore             # Git ignore rules
-├── bootstrap.php          # Application bootstrap
-└── README.md              # This file
-```
-
-## ⚡ Quick Start
+## 📦 Installation
 
 ### Prerequisites
-- PHP 8.4 or higher
-- MySQL 8.0 or higher
-- Web server (Apache/Nginx) or PHP built-in server
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd SEL-Diagnostic-center
-   ```
-
-2. **Configure environment**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
-
-3. **Set up database**
-   ```bash
-   # Create database
-   mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-
-   # Import schemas in order
-   mysql -u root -p pathology_lab < database/core_schema.sql
-   mysql -u root -p pathology_lab < database/medical_schema.sql
-   mysql -u root -p pathology_lab < database/invoice_schema.sql
-   mysql -u root -p pathology_lab < database/sms_schema.sql
-   mysql -u root -p pathology_lab < database/audit_schema.sql
-   mysql -u root -p pathology_lab < database/inventory_schema.sql
-   mysql -u root -p pathology_lab < database/seed_data.sql
-   ```
-
-4. **Start the application**
-   ```bash
-   # Development server
-   php -S localhost:8000 -t public
-
-   # Or configure Apache/Nginx to point to public/ directory
-   ```
-
-5. **Configure SMS (Optional)**
-   - Sign up at https://sms.net.bd/signup/ for free credits
-   - Get your API key from the dashboard
-   - Update `SMS_API_KEY` in `.env` file
-   - See `SMS_PROVIDER_SETUP.md` for detailed instructions
-
-6. **Access the application**
-   - Open `http://localhost:8000` in your browser
-   - Default login: `admin` / `admin123`
-
-## 🔧 Configuration
-
-### Environment Variables (.env)
-```env
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=pathology_lab
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-
-# Application Settings
-APP_NAME="SEL Diagnostic Center"
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=http://localhost:8000
-
-# Security Settings
-APP_KEY=your-secret-key-here
-SESSION_LIFETIME=120
-```
-
-### Database Configuration
-The system uses MySQL with the following key tables:
-- `users` - User accounts and authentication
-- `invoices` - Patient invoices and billing
-- `tests` - Laboratory test catalog
-- `doctors` - Referring physician information
-- `invoice_tests` - Test-invoice relationships
-- `test_reports` - Lab reports and results
-- `test_results` - Individual test parameter results
-- `sms_logs` - SMS notification history
-- `audit_logs` - System activity tracking
-- `inventory_items` - Lab supplies and consumables
-
-## 🎯 Usage Guide
-
-### Dashboard
-- **Statistics Overview**: Total invoices, tests, revenue, and growth metrics
-- **Recent Activity**: Latest invoices and system activity
-- **Quick Actions**: Fast access to common operations
-- **Performance Charts**: Visual representation of key metrics
-
-### Invoice Management
-- **Create Invoices**: Add patient details and select tests
-- **Track Payments**: Monitor payment status and amounts
-- **Search & Filter**: Find invoices by patient, date, or status
-- **Print Invoices**: Professional invoice printing
-
-### Test Management (Admin Only)
-- **Add Tests**: Create new laboratory tests with pricing
-- **Categorize**: Organize tests by medical categories
-- **Manage Pricing**: Update test costs and descriptions
-- **Track Usage**: Monitor test popularity and revenue
-
-## 🧪 Testing
-
-### Manual Testing
-The application has been thoroughly tested for:
-- ✅ Authentication and session management
-- ✅ Database connectivity and data integrity
-- ✅ Invoice CRUD operations
-- ✅ Responsive design and UI/UX
-- ✅ Error handling and security
-- ✅ API endpoints functionality
-
-### Automated Testing
-Run the Python unit test suite:
-```bash
-python3 test_api.py
-```
-
-The test suite covers:
-- API endpoint functionality
-- Authentication flows
-- Database operations
-- Error handling
-- Security measures
-
-## 🔒 Security Features
-
-- **CSRF Protection**: All forms include security tokens
-- **Input Validation**: Comprehensive server-side validation
-- **SQL Injection Prevention**: Prepared statements throughout
-- **XSS Protection**: Output escaping and sanitization
-- **Session Security**: Secure session configuration with regeneration
-- **Role-based Access**: Middleware-based authorization system
-
-## 🌐 API Endpoints
-
-### Authentication
-- `GET /` - Login page / Dashboard
-- `POST /` - Login authentication
-- `GET /logout` - User logout
-
-### Dashboard
-- `GET /dashboard` - Main dashboard
-- `GET /api/dashboard-stats` - Dashboard statistics (JSON)
-
-### Invoices
-- `GET /invoices` - Invoice listing
-- `GET /invoices/create` - Create invoice form
-- `POST /invoices/store` - Store new invoice
-- `GET /invoices/{id}` - View specific invoice
-- `GET /invoices/{id}/pdf` - Generate PDF invoice
-- `POST /invoices/{id}/update-payment` - Update payment status
-
-### Tests
-- `GET /tests` - Test listing
-- `GET /tests/create` - Create test form (Admin)
-- `POST /tests/store` - Store new test (Admin)
-- `GET /tests/{code}` - View specific test
-- `GET /tests/{code}/edit` - Edit test form (Admin)
-- `POST /tests/{code}/update` - Update test (Admin)
-
-### Reports
-- `GET /reports` - Report listing
-- `GET /reports/{id}` - View report details
-- `GET /reports/{id}/edit` - Lab tech data entry form
-- `POST /reports/{id}/update` - Update report with results
-
-### Users
-- `GET /users` - User listing (Admin)
-- `GET /users/create` - Create user form (Admin)
-- `POST /users/store` - Store new user (Admin)
-- `DELETE /users/{id}` - Delete user (Admin)
-
-### Audit Logs
-- `GET /audit` - Audit log viewer (Admin)
-
-### Inventory
-- `GET /inventory` - Inventory management (Admin)
-
-### SMS
-- `GET /sms` - SMS dashboard (Admin)
-- `POST /sms/send` - Send SMS notification (Admin)
-
-## 📊 Performance
-
-The system is optimized for performance with:
-- **Database Indexing**: Optimized queries with proper indexes
-- **Pagination**: Large datasets are paginated for faster loading
-- **Caching**: Session-based caching for frequently accessed data
-- **Minified Assets**: Compressed CSS and JavaScript
-- **Lazy Loading**: Images and non-critical content loaded on demand
-
-## 🛡 Maintenance
-
-### Regular Tasks
-- Monitor application logs in `logs/` directory
-- Backup database regularly
-- Update dependencies when security patches are available
-- Review user access and permissions periodically
-
-### Monitoring
-- Check dashboard statistics for system health
-- Monitor database performance and storage usage
-- Review audit logs for unusual activity
-- Ensure backup systems are functioning
-
-## 🤝 Contributing
-
-1. Follow PSR-4 autoloading standards
-2. Use proper namespacing and class organization
-3. Implement comprehensive input validation
-4. Include proper error handling and logging
-5. Add CSRF protection to all forms
-6. Write unit tests for new functionality
-7. Update documentation for new features
-
-## 📝 License
-
-This project is proprietary software developed for SEL Diagnostic Center.
-
-## 🆘 Support
-
-For technical support or feature requests:
-1. Check the application logs in `logs/` directory
-2. Review this documentation
-3. Contact the development team
+- PHP 7.4+ (with MySQL extension)
+- MySQL 5.7+
+- XAMPP (recommended) or any web server
 
 ---
 
-**SEL Diagnostic Center Laboratory Management System** - Streamlining pathology operations with modern technology.
+## Method 1: Using XAMPP (Recommended for Windows)
+
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/your-repo/SEL-Diagnostic-center.git
+cd SEL-Diagnostic-center
+```
+
+### Step 2: Setup Environment
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+
+Edit `.env` file and set database credentials:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=pathology_lab
+DB_USER=root
+DB_PASS=
+```
+> **Note**: XAMPP's default MySQL has no password (leave `DB_PASS` empty)
+
+### Step 3: Start XAMPP
+1. Open **XAMPP Control Panel**
+2. Start **Apache** and **MySQL** modules
+3. Wait until both show green "Running" status
+
+### Step 4: Create Database
+1. Open browser → Go to `http://localhost/phpmyadmin`
+2. Click **"New"** in left sidebar
+3. Database name: `pathology_lab`
+4. Collation: Select `utf8mb4_unicode_ci`
+5. Click **"Create"**
+
+### Step 5: Import Database Files
+1. Click on **`pathology_lab`** database (left sidebar)
+2. Click **"Import"** tab
+3. Import these files **in exact order** (one at a time):
+
+   **File 1:** `1_schema.sql`
+   - Click "Choose File" → Select `database/1_schema.sql` → Click "Import"
+   - ✅ Wait for success message
+
+   **File 2:** `2_initial_data.sql`
+   - Click "Choose File" → Select `database/2_initial_data.sql` → Click "Import"
+   - ✅ Wait for success message
+
+   **File 3 (Optional):** `3_demo_data.sql`
+   - Only import if you want sample data (invoices, patients, reports)
+   - Click "Choose File" → Select `database/3_demo_data.sql` → Click "Import"
+   - ✅ Wait for success message
+
+### Step 6: Move Project to XAMPP
+Move your project folder to XAMPP's htdocs:
+```bash
+# Windows
+move SEL-Diagnostic-center C:\xampp\htdocs\
+
+# Or just copy the folder manually to C:\xampp\htdocs\
+```
+
+### Step 7: Run the Application
+1. Open browser
+2. Go to: `http://localhost/SEL-Diagnostic-center/public`
+3. Login with default credentials:
+   - **Username**: `admin`
+   - **Password**: `admin123`
+
+✅ **Done! You should now see the dashboard.**
+
+---
+
+## Method 2: Using Terminal (Linux/Mac/Windows)
+
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/your-repo/SEL-Diagnostic-center.git
+cd SEL-Diagnostic-center
+```
+
+### Step 2: Setup Environment
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and configure database:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=pathology_lab
+DB_USER=root
+DB_PASS=your_password
+```
+
+### Step 3: Create Database and Import Files
+
+**For Windows (XAMPP):**
+```bash
+# Create database
+C:\xampp\mysql\bin\mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Import files in order
+C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\1_schema.sql
+C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\2_initial_data.sql
+C:\xampp\mysql\bin\mysql -u root -p pathology_lab < database\3_demo_data.sql
+```
+> Press Enter when asked for password (XAMPP default has no password)
+
+**For Linux/Mac:**
+```bash
+# Create database
+mysql -u root -p -e "CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Import files in order
+mysql -u root -p pathology_lab < database/1_schema.sql
+mysql -u root -p pathology_lab < database/2_initial_data.sql
+mysql -u root -p pathology_lab < database/3_demo_data.sql
+```
+
+### Step 4: Run the Application
+
+**Option A: PHP Built-in Server (Quick Testing)**
+```bash
+php -S localhost:8000 -t public
+```
+Then open: `http://localhost:8000`
+
+**Option B: XAMPP/Apache**
+- Move project to `C:\xampp\htdocs\` (Windows) or `/var/www/html/` (Linux)
+- Open: `http://localhost/SEL-Diagnostic-center/public`
+
+### Step 5: Login
+- **Username**: `admin`
+- **Password**: `admin123`
+
+✅ **Done! You should now see the dashboard.**
+
+---
+
+## 📊 Database Files Explained
+
+| File | Description | Required? |
+|------|-------------|-----------|
+| `1_schema.sql` | Creates all database tables | ✅ Yes |
+| `2_initial_data.sql` | Admin user, tests catalog, system config | ✅ Yes |
+| `3_demo_data.sql` | Sample invoices, patients, reports | ⚠️ Optional |
+
+---
+
+## 🔧 Troubleshooting
+
+### ❌ "System temporarily unavailable" Error
+
+**Cause**: Database not configured properly
+
+**Solution**:
+1. ✅ Check `.env` file has correct database credentials
+2. ✅ Verify MySQL is running (XAMPP Control Panel)
+3. ✅ Confirm database `pathology_lab` exists in phpMyAdmin
+4. ✅ Make sure all 3 SQL files imported successfully
+
+**Test Database Connection:**
+```bash
+# Windows
+C:\xampp\mysql\bin\mysql -u root -p pathology_lab -e "SHOW TABLES;"
+
+# Linux/Mac
+mysql -u root -p pathology_lab -e "SHOW TABLES;"
+```
+You should see 15+ tables listed.
+
+### ❌ Import Failed / Foreign Key Error
+
+**Solution**: Drop database and start over
+```sql
+DROP DATABASE pathology_lab;
+CREATE DATABASE pathology_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+Then re-import files in exact order: 1 → 2 → 3
+
+### ❌ Page Not Found / 404 Error
+
+**Solution**: Make sure you're accessing the `/public` directory:
+- ✅ `http://localhost/SEL-Diagnostic-center/public`
+- ❌ `http://localhost/SEL-Diagnostic-center` (won't work)
+
+### ❌ Can't Login with admin/admin123
+
+**Cause**: Database not imported or initial_data.sql skipped
+
+**Solution**: Re-import `database/2_initial_data.sql`
+
+---
+
+## 📝 Default Login Credentials
+
+After installation, use these credentials:
+
+- **Username**: `admin`
+- **Password**: `admin123`
+
+⚠️ **Change the password immediately after first login!**
+
+---
+
+## 🎯 Project Structure
+
+```
+SEL-Diagnostic-center/
+├── database/
+│   ├── 1_schema.sql          # Database structure
+│   ├── 2_initial_data.sql    # Essential data
+│   └── 3_demo_data.sql       # Sample data (optional)
+├── public/
+│   └── index.php             # Entry point
+├── src/
+│   └── Controllers/          # Application logic
+├── views/                    # HTML templates
+├── .env.example              # Environment template
+├── .gitignore
+├── bootstrap.php             # App initialization
+└── README.md
+```
+
+---
+
+## 🤝 Contributing
+
+1. Follow PSR-4 standards
+2. Add CSRF protection to all forms
+3. Validate all inputs
+4. Update documentation
+
+---
+
+## 📄 License
+
+Proprietary software for SEL Diagnostic Center
+
+---
+
+## 🆘 Need Help?
+
+1. Check logs: `storage/logs/app.log`
+2. Verify database connection
+3. Review this README
+4. Contact development team
+
+---
+
+**SEL Diagnostic Center** - Modern Laboratory Management System
