@@ -16,133 +16,316 @@ A modern laboratory management system built with PHP and MySQL for diagnostic ce
 
 ## 🛠 Technology Stack
 
-- **Backend**: PHP 8.2 with MVC architecture
-- **Database**: MariaDB 10.11
+- **Backend**: PHP 8.1+ with MVC architecture
+- **Database**: MySQL 8.0+ or MariaDB 10.6+
 - **Frontend**: Bootstrap 5.3, FontAwesome, JavaScript
-- **Deployment**: Docker + Docker Compose
+- **Build Tool**: Vite 5 (hot reload, fast builds)
 
 ---
 
-## 🐳 Docker Setup (Step-by-Step)
+## 🐧 Linux Native Setup (Step-by-Step)
+
+This guide will walk you through installing everything needed to run the application natively on Linux (Ubuntu/Debian-based distributions).
 
 ### Prerequisites
 
-**You only need Docker installed. Nothing else!**
+**What you'll install:**
+- PHP 8.1+ with extensions
+- MySQL 8.0+ or MariaDB 10.6+
+- Node.js 18+ and npm
+- Git
+- Composer (PHP package manager)
 
-- **Windows/Mac**: [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
-- **Linux**: See Step 1 below
+**Supported Linux Distributions:**
+- Ubuntu 20.04+
+- Debian 11+
+- Linux Mint 20+
+- Pop!_OS 20.04+
+- Other Debian-based distros
 
 ---
 
-### Step 1: Install Docker
-
-#### **Windows/Mac:**
-
-1. Download [Docker Desktop](https://www.docker.com/products/docker-desktop)
-2. Run the installer
-3. Launch Docker Desktop
-4. Wait until you see the whale icon in your system tray
-5. Docker is ready when the icon stops animating
-
-#### **Linux:**
+### Step 1: Update System
 
 ```bash
-# Download and run the Docker installation script
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+# Update package list
+sudo apt update
 
-# Install Docker Compose plugin
-sudo apt-get update
-sudo apt-get install docker-compose-plugin
-
-# Add your user to the docker group (avoid using sudo)
-sudo usermod -aG docker $USER
-
-# Activate the group changes
-newgrp docker
-
-# Verify installation
-docker --version
-docker compose version
+# Upgrade existing packages
+sudo apt upgrade -y
 ```
 
 ---
 
-### Step 2: Get the Code
+### Step 2: Install PHP 8.1+
 
 ```bash
+# Add PHP repository (if needed for latest version)
+sudo apt install -y software-properties-common
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt update
+
+# Install PHP and required extensions
+sudo apt install -y php8.2 php8.2-cli php8.2-fpm php8.2-mysql php8.2-mbstring \
+    php8.2-xml php8.2-curl php8.2-zip php8.2-gd php8.2-bcmath php8.2-intl
+
+# Verify PHP installation
+php -v
+```
+
+You should see something like:
+```
+PHP 8.2.x (cli) ...
+```
+
+---
+
+### Step 3: Install MySQL/MariaDB
+
+**Choose one:**
+
+#### Option A: MySQL 8.0
+
+```bash
+# Install MySQL server
+sudo apt install -y mysql-server
+
+# Start MySQL service
+sudo systemctl start mysql
+sudo systemctl enable mysql
+
+# Secure MySQL installation (set root password)
+sudo mysql_secure_installation
+```
+
+Follow the prompts:
+- Set root password: **YES** (choose a strong password)
+- Remove anonymous users: **YES**
+- Disallow root login remotely: **YES**
+- Remove test database: **YES**
+- Reload privilege tables: **YES**
+
+#### Option B: MariaDB 10.6+ (Recommended)
+
+```bash
+# Install MariaDB server
+sudo apt install -y mariadb-server mariadb-client
+
+# Start MariaDB service
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+# Secure MariaDB installation
+sudo mysql_secure_installation
+```
+
+Same prompts as MySQL above.
+
+---
+
+### Step 4: Install Node.js and npm
+
+```bash
+# Install Node.js 18.x LTS
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Verify installation
+node -v
+npm -v
+```
+
+You should see:
+```
+v18.x.x
+9.x.x
+```
+
+---
+
+### Step 5: Install Git
+
+```bash
+# Install Git
+sudo apt install -y git
+
+# Verify installation
+git --version
+```
+
+---
+
+### Step 6: Install Composer (PHP Package Manager)
+
+```bash
+# Download Composer installer
+curl -sS https://getcomposer.org/installer -o composer-setup.php
+
+# Install Composer globally
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+# Remove installer
+rm composer-setup.php
+
+# Verify installation
+composer --version
+```
+
+---
+
+### Step 7: Clone the Repository
+
+```bash
+# Navigate to your preferred directory
+cd ~
+
 # Clone the repository
 git clone https://github.com/your-repo/SEL-Diagnostic-center.git
 
-# Navigate into the project folder
+# Enter the project directory
 cd SEL-Diagnostic-center
 
-# Switch to docker-setup branch
-git checkout docker-setup
+# Switch to native Linux setup branch
+git checkout native-linux-setup
 ```
 
 ---
 
-### Step 3: Start the Application
+### Step 8: Install Node Dependencies
 
 ```bash
-# Start all services (app, database, phpMyAdmin)
-docker-compose up -d
+# Install npm packages
+npm install
 ```
 
-**What happens:**
-- 🔄 Downloads Docker images (PHP, MariaDB, phpMyAdmin) - **only on first run**
-- 🏗️ Builds the application container
-- 🗄️ Creates the database
-- 📥 Automatically imports all SQL data (schema + initial data + demo data)
-- 🚀 Starts all services in the background
-
-**First run**: 2-3 minutes (downloading images)
-**Subsequent runs**: <10 seconds
+This installs Vite and other frontend dependencies.
 
 ---
 
-### Step 4: Wait for Database Initialization
+### Step 9: Configure Environment
 
 ```bash
-# Watch the logs to see when database is ready
-docker-compose logs -f db
+# Copy environment example file
+cp .env.example .env
+
+# Edit the .env file with your database credentials
+nano .env
 ```
 
-Look for this message:
-```
-sel_diagnostic_db | ready for connections
+Update these values:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=diagnostic_center
+DB_USER=root
+DB_PASS=your_mysql_password_here
 ```
 
-Then press `Ctrl+C` to exit logs.
-
-**Or just wait 30 seconds** - that's usually enough!
+**Save and exit:** Press `Ctrl+X`, then `Y`, then `Enter`
 
 ---
 
-### Step 5: Access the Application
+### Step 10: Create Database
+
+```bash
+# Login to MySQL/MariaDB
+sudo mysql -u root -p
+```
+
+Enter your root password, then run these SQL commands:
+
+```sql
+-- Create database
+CREATE DATABASE diagnostic_center CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Create a dedicated user (recommended for security)
+CREATE USER 'diagnostic_user'@'localhost' IDENTIFIED BY 'strong_password_here';
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON diagnostic_center.* TO 'diagnostic_user'@'localhost';
+
+-- Flush privileges
+FLUSH PRIVILEGES;
+
+-- Exit MySQL
+EXIT;
+```
+
+**If you created a dedicated user**, update your `.env` file:
+```env
+DB_USER=diagnostic_user
+DB_PASS=strong_password_here
+```
+
+---
+
+### Step 11: Import Database
+
+```bash
+# Import the combined SQL file
+mysql -u root -p diagnostic_center < diagnostic_center.sql
+
+# Or if using dedicated user:
+mysql -u diagnostic_user -p diagnostic_center < diagnostic_center.sql
+```
+
+Enter the password when prompted.
+
+**Verify import:**
+```bash
+mysql -u root -p -e "USE diagnostic_center; SHOW TABLES;"
+```
+
+You should see a list of tables (users, invoices, tests, etc.).
+
+---
+
+### Step 12: Set Permissions
+
+```bash
+# Make sure the web server can write to storage directories
+mkdir -p storage/logs
+chmod -R 775 storage
+chmod -R 775 public/uploads
+
+# Set ownership (replace 'yourusername' with your actual username)
+sudo chown -R $USER:www-data storage
+sudo chown -R $USER:www-data public/uploads
+```
+
+---
+
+### Step 13: Start the Application
+
+```bash
+# Start the development server
+npm run dev
+```
+
+This command starts:
+- **Vite dev server** (port 5173) - for hot reload
+- **PHP built-in server** (port 8000) - for the application
+
+You should see output like:
+```
+> SEL-Diagnostic-center@1.0.0 dev
+> concurrently "npm run vite" "php -S localhost:8000 -t public"
+
+[0] VITE v5.x.x ready in X ms
+[0] ➜ Local: http://localhost:5173/
+[1] PHP 8.2.x Development Server started
+```
+
+---
+
+### Step 14: Access the Application
 
 Open your browser and go to:
 
-#### **Main Application**
-- URL: **http://localhost:8080**
+**Main Application:**
+- URL: **http://localhost:8000**
 - Username: **admin**
 - Password: **password**
-
-#### **phpMyAdmin (Database Management)**
-- URL: **http://localhost:8081**
-- Server: **db**
-- Username: **root**
-- Password: **root**
-
----
-
-### Step 6: Verify Everything Works
-
-1. Login with `admin` / `password`
-2. You should see the dashboard
-3. Check the navigation menu - all features should be accessible
-4. Database should have sample data (invoices, patients, tests)
 
 ✅ **You're all set!**
 
@@ -151,183 +334,260 @@ Open your browser and go to:
 ## 📋 Daily Usage
 
 ### Start the Application
+
 ```bash
-docker-compose up -d
+cd ~/SEL-Diagnostic-center
+npm run dev
 ```
+
+Keep the terminal open while working.
 
 ### Stop the Application
+
+Press `Ctrl+C` in the terminal where `npm run dev` is running.
+
+### Check MySQL Service Status
+
 ```bash
-docker-compose down
+# Check if MySQL/MariaDB is running
+sudo systemctl status mysql
+# or
+sudo systemctl status mariadb
+
+# Start if stopped
+sudo systemctl start mysql
+
+# Restart if needed
+sudo systemctl restart mysql
 ```
-
-### Restart Services
-```bash
-docker-compose restart
-```
-
-### View Logs (if something goes wrong)
-```bash
-# All services
-docker-compose logs -f
-
-# Just the app
-docker-compose logs -f app
-
-# Just the database
-docker-compose logs -f db
-```
-
-### Check Running Containers
-```bash
-docker ps
-```
-
-You should see 3 containers:
-- `sel_diagnostic_app` (PHP/Apache)
-- `sel_diagnostic_db` (MariaDB)
-- `sel_phpmyadmin` (Database UI)
 
 ---
 
 ## 🔧 Troubleshooting
 
-### ❌ Port 8080 Already in Use
-
-**Error:** `Bind for 0.0.0.0:8080 failed: port is already allocated`
-
-**Solution:**
-
-1. Open `docker-compose.yml`
-2. Find this line:
-   ```yaml
-   ports:
-     - "8080:80"
-   ```
-3. Change `8080` to any free port (e.g., `9000`):
-   ```yaml
-   ports:
-     - "9000:80"
-   ```
-4. Save and restart:
-   ```bash
-   docker-compose down
-   docker-compose up -d
-   ```
-5. Access the app at `http://localhost:9000`
-
----
-
-### ❌ Database Connection Failed
-
-**Error:** Can't connect to database
+### ❌ "Connection refused" or "Can't connect to database"
 
 **Solution:**
 
 ```bash
-# Check database logs
-docker-compose logs db
+# Check if MySQL is running
+sudo systemctl status mysql
 
-# Restart database service
-docker-compose restart db
+# If not running, start it
+sudo systemctl start mysql
 
-# If still not working, reset everything
-docker-compose down -v
-docker-compose up -d
+# Check database credentials in .env
+cat .env | grep DB_
+
+# Test database connection
+mysql -u root -p -e "USE diagnostic_center; SELECT COUNT(*) FROM users;"
 ```
 
 ---
 
-### ❌ Login Not Working (admin/password fails)
-
-**Cause:** Database not initialized properly
+### ❌ "Permission denied" errors
 
 **Solution:**
 
 ```bash
-# Stop and remove everything (including volumes)
-docker-compose down -v
+# Fix storage permissions
+chmod -R 775 storage
+chmod -R 775 public/uploads
 
-# Start fresh - database will re-import
-docker-compose up -d
-
-# Wait 30 seconds for initialization
+# Fix ownership
+sudo chown -R $USER:www-data storage
+sudo chown -R $USER:www-data public/uploads
 ```
 
 ---
 
-### ❌ Changes to Code Not Showing
+### ❌ PHP extensions missing
 
-**Cause:** Browser cache or container needs restart
+**Error:** "extension not found" or "Class not found"
 
 **Solution:**
 
 ```bash
-# Restart the app container
-docker-compose restart app
+# Install missing PHP extensions
+sudo apt install -y php8.2-mbstring php8.2-xml php8.2-curl php8.2-zip \
+    php8.2-gd php8.2-bcmath php8.2-mysql php8.2-intl
 
-# Or hard refresh browser (Ctrl+Shift+R or Cmd+Shift+R)
+# Restart PHP if using PHP-FPM
+sudo systemctl restart php8.2-fpm
 ```
 
 ---
 
-### ❌ Docker Not Running
-
-**Error:** `Cannot connect to the Docker daemon`
+### ❌ Port 8000 already in use
 
 **Solution:**
 
-- **Windows/Mac**: Launch Docker Desktop and wait for it to start
-- **Linux**:
-  ```bash
-  sudo systemctl start docker
-  ```
-
----
-
-### 🔄 Start Fresh (Nuclear Option)
-
-If everything is broken and you want to start over:
-
 ```bash
-# Stop and remove all containers, networks, and volumes
-docker-compose down -v
+# Check what's using port 8000
+sudo lsof -i :8000
 
-# Remove any leftover images
-docker system prune -a
+# Kill the process (replace PID with actual process ID)
+kill -9 PID
 
-# Start fresh
-docker-compose up -d
+# Or use a different port
+php -S localhost:9000 -t public
 ```
 
 ---
 
-## 🎯 What's Included
+### ❌ npm install fails
 
-### Services Running
+**Solution:**
 
-1. **Application Container** (`sel_diagnostic_app`)
-   - PHP 8.2 + Apache
-   - All PHP extensions installed
-   - Port: 8080
+```bash
+# Clear npm cache
+npm cache clean --force
 
-2. **Database Container** (`sel_diagnostic_db`)
-   - MariaDB 10.11
-   - Auto-imports `diagnostic_center.sql` on first run
-   - Port: 3307 (if you need external access)
+# Remove node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+```
 
-3. **phpMyAdmin Container** (`sel_phpmyadmin`)
-   - Web-based database management
-   - Port: 8081
+---
 
-### Data Persistence
+### ❌ "Access denied for user" MySQL error
 
-Your data is stored in Docker volumes and **survives container restarts**:
-- Database data: `db_data` volume
-- Application files: Mounted from your project folder
+**Solution:**
 
-**Even if you run `docker-compose down`, your data is safe!**
+```bash
+# Reset MySQL root password if forgotten
+sudo mysql
 
-**To delete data**: `docker-compose down -v` (the `-v` flag removes volumes)
+# Then run:
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'new_password';
+FLUSH PRIVILEGES;
+EXIT;
+
+# Update .env with new password
+nano .env
+```
+
+---
+
+### 🔄 Reset Database (Start Fresh)
+
+```bash
+# Backup first (optional)
+mysqldump -u root -p diagnostic_center > backup_$(date +%Y%m%d).sql
+
+# Drop and recreate database
+mysql -u root -p -e "DROP DATABASE diagnostic_center;"
+mysql -u root -p -e "CREATE DATABASE diagnostic_center CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Re-import
+mysql -u root -p diagnostic_center < diagnostic_center.sql
+```
+
+---
+
+## 🎯 Production Deployment (Optional)
+
+### Install and Configure Nginx
+
+```bash
+# Install Nginx
+sudo apt install -y nginx
+
+# Install PHP-FPM (FastCGI Process Manager)
+sudo apt install -y php8.2-fpm
+
+# Create Nginx site configuration
+sudo nano /etc/nginx/sites-available/diagnostic-center
+```
+
+Add this configuration:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /home/yourusername/SEL-Diagnostic-center/public;
+
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+```bash
+# Enable the site
+sudo ln -s /etc/nginx/sites-available/diagnostic-center /etc/nginx/sites-enabled/
+
+# Test Nginx configuration
+sudo nginx -t
+
+# Restart Nginx
+sudo systemctl restart nginx
+
+# Set proper permissions
+sudo chown -R www-data:www-data /home/yourusername/SEL-Diagnostic-center/storage
+sudo chown -R www-data:www-data /home/yourusername/SEL-Diagnostic-center/public/uploads
+```
+
+Access via: **http://your-server-ip** or **http://your-domain.com**
+
+---
+
+## 🔒 Security Recommendations
+
+### 1. Secure MySQL
+
+```bash
+# Only allow local connections
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+Make sure this line exists:
+```
+bind-address = 127.0.0.1
+```
+
+### 2. Enable Firewall
+
+```bash
+# Install UFW (if not installed)
+sudo apt install -y ufw
+
+# Allow SSH
+sudo ufw allow ssh
+
+# Allow HTTP and HTTPS
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+# Enable firewall
+sudo ufw enable
+```
+
+### 3. Change Default Credentials
+
+After first login:
+1. Go to User Management
+2. Change admin password
+3. Create separate user accounts for staff
+
+### 4. Keep System Updated
+
+```bash
+# Update system regularly
+sudo apt update && sudo apt upgrade -y
+```
 
 ---
 
@@ -335,20 +595,26 @@ Your data is stored in Docker volumes and **survives container restarts**:
 
 ```
 SEL-Diagnostic-center/
-├── Dockerfile                   # PHP/Apache container config
-├── docker-compose.yml          # Services orchestration
-├── .dockerignore               # Files to exclude from build
-├── diagnostic_center.sql       # Combined database dump (auto-imported)
-├── database/
-│   ├── 1_schema.sql           # Database structure
-│   ├── 2_initial_data.sql     # Essential data
-│   └── 3_demo_data.sql        # Sample data
 ├── public/
-│   └── index.php              # Application entry point
+│   ├── index.php              # Application entry point
+│   ├── uploads/               # User uploaded files
+│   └── assets/                # CSS, JS, images
 ├── src/
-│   └── Controllers/           # Application logic
+│   ├── Controllers/           # Application logic
+│   ├── Models/                # Database models
+│   └── Core/                  # Core classes
 ├── views/                     # HTML templates
-├── .env.example               # Environment variables template
+├── storage/
+│   └── logs/                  # Application logs
+├── database/
+│   ├── 1_schema.sql          # Database structure
+│   ├── 2_initial_data.sql    # Essential data
+│   └── 3_demo_data.sql       # Sample data
+├── diagnostic_center.sql      # Combined database file
+├── .env.example               # Environment template
+├── .env                       # Your configuration (DO NOT COMMIT)
+├── package.json               # Node dependencies
+├── vite.config.js             # Vite configuration
 └── README.md                  # This file
 ```
 
@@ -360,66 +626,67 @@ SEL-Diagnostic-center/
 - Username: `admin`
 - Password: `password`
 
-**Database (phpMyAdmin):**
-- Server: `db`
-- Username: `root`
-- Password: `root`
+**Database:**
+- Host: `localhost`
+- Port: `3306`
 - Database: `diagnostic_center`
+- Username: `root` (or your custom user)
+- Password: (set during MySQL installation)
 
-⚠️ **Change the admin password after first login!**
+⚠️ **Change the admin password immediately after first login!**
 
 ---
 
-## 💻 Advanced Docker Commands
+## 💻 Useful Commands
 
-### Access Container Shell
+### View Application Logs
 
 ```bash
-# PHP container
-docker exec -it sel_diagnostic_app bash
-
-# Once inside, you can run PHP commands:
-php -v
-ls -la /var/www/html
+# Real-time log viewing
+tail -f storage/logs/app.log
 ```
 
-### Access Database Directly
+### Database Backup
 
 ```bash
-# MySQL command line
-docker exec -it sel_diagnostic_db mysql -u root -proot diagnostic_center
+# Create backup
+mysqldump -u root -p diagnostic_center > backup_$(date +%Y%m%d_%H%M%S).sql
 
-# Once inside, run SQL:
-SHOW TABLES;
-SELECT * FROM users;
+# Restore from backup
+mysql -u root -p diagnostic_center < backup_file.sql
 ```
 
-### View Container Resource Usage
+### Check PHP Configuration
 
 ```bash
-docker stats
+# View PHP info
+php -i | grep -E 'Configuration File|extension_dir|error_log'
+
+# List installed PHP modules
+php -m
 ```
 
-### Export Database Backup
+### Monitor System Resources
 
 ```bash
-docker exec sel_diagnostic_db mysqldump -u root -proot diagnostic_center > backup.sql
-```
+# Check disk space
+df -h
 
-### Import Database Backup
+# Check memory usage
+free -h
 
-```bash
-cat backup.sql | docker exec -i sel_diagnostic_db mysql -u root -proot diagnostic_center
+# Check CPU and memory by process
+top
 ```
 
 ---
 
 ## 🤝 Contributing
 
-1. Make changes to the code (they'll reflect immediately - volume is mounted)
-2. Test your changes at `http://localhost:8080`
-3. Commit and push as usual
-4. No need to rebuild Docker unless you change `Dockerfile` or `docker-compose.yml`
+1. Make changes to the code
+2. Test locally with `npm run dev`
+3. Commit changes: `git add . && git commit -m "Description"`
+4. Push to repository: `git push`
 
 ---
 
@@ -431,10 +698,20 @@ Proprietary software for SEL Diagnostic Center
 
 ## 🆘 Need Help?
 
-1. **Check logs**: `docker-compose logs -f`
-2. **Restart services**: `docker-compose restart`
-3. **Start fresh**: `docker-compose down -v && docker-compose up -d`
+1. **Check logs**: `tail -f storage/logs/app.log`
+2. **Verify services**: `sudo systemctl status mysql`
+3. **Test database**: `mysql -u root -p diagnostic_center`
 4. **Contact the development team**
+
+---
+
+## 📚 Additional Resources
+
+- [PHP Documentation](https://www.php.net/docs.php)
+- [MySQL Documentation](https://dev.mysql.com/doc/)
+- [MariaDB Documentation](https://mariadb.org/documentation/)
+- [Nginx Documentation](https://nginx.org/en/docs/)
+- [Vite Documentation](https://vitejs.dev/guide/)
 
 ---
 
