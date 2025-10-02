@@ -97,25 +97,51 @@ print_step "Starting automated installation..."
 echo
 
 # Update system
-print_step "Step 1/11: Updating system packages..."
+print_step "Step 1/12: Updating system packages..."
 sudo apt update -qq || error_exit "Failed to update package list"
 sudo apt upgrade -y -qq || print_warning "Some packages could not be upgraded, continuing..."
 print_success "System updated"
 echo
 
-# Install prerequisites
-print_step "Step 2/11: Installing prerequisites..."
-sudo apt install -y software-properties-common curl wget gnupg2 ca-certificates lsb-release apt-transport-https || error_exit "Failed to install prerequisites"
-print_success "Prerequisites installed"
+# Install essential build tools and prerequisites
+print_step "Step 2/12: Installing essential tools and prerequisites..."
+sudo apt install -y \
+    build-essential \
+    software-properties-common \
+    curl \
+    wget \
+    git \
+    unzip \
+    gnupg2 \
+    ca-certificates \
+    lsb-release \
+    apt-transport-https \
+    python3 \
+    || error_exit "Failed to install essential tools"
+print_success "Essential tools installed"
 echo
 
 # Install PHP 8.2
-print_step "Step 3/11: Installing PHP 8.2 and extensions..."
+print_step "Step 3/12: Installing PHP 8.2 and extensions..."
 sudo add-apt-repository ppa:ondrej/php -y || error_exit "Failed to add PHP repository"
 sudo apt update -qq
 
-sudo apt install -y php8.2 php8.2-cli php8.2-fpm php8.2-mysql php8.2-mbstring \
-    php8.2-xml php8.2-curl php8.2-zip php8.2-gd php8.2-bcmath php8.2-intl \
+sudo apt install -y \
+    php8.2 \
+    php8.2-cli \
+    php8.2-fpm \
+    php8.2-mysql \
+    php8.2-pdo \
+    php8.2-mbstring \
+    php8.2-xml \
+    php8.2-curl \
+    php8.2-zip \
+    php8.2-gd \
+    php8.2-bcmath \
+    php8.2-intl \
+    php8.2-soap \
+    php8.2-common \
+    php8.2-opcache \
     || error_exit "Failed to install PHP"
 
 PHP_VERSION=$(php -v | head -n 1)
@@ -123,7 +149,7 @@ print_success "PHP installed: $PHP_VERSION"
 echo
 
 # Install MariaDB
-print_step "Step 4/11: Installing MariaDB..."
+print_step "Step 4/12: Installing MariaDB database server..."
 export DEBIAN_FRONTEND=noninteractive
 sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password password'
 sudo debconf-set-selections <<< 'mariadb-server mysql-server/root_password_again password'
@@ -134,24 +160,21 @@ print_success "MariaDB installed and running"
 echo
 
 # Install Node.js
-print_step "Step 5/11: Installing Node.js 18.x..."
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - || error_exit "Failed to add Node.js repository"
-sudo apt install -y nodejs || error_exit "Failed to install Node.js"
+print_step "Step 5/12: Installing Node.js 18.x LTS..."
+if ! command -v node &> /dev/null; then
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - || error_exit "Failed to add Node.js repository"
+    sudo apt install -y nodejs || error_exit "Failed to install Node.js"
+else
+    print_success "Node.js already installed"
+fi
 NODE_VERSION=$(node -v)
 NPM_VERSION=$(npm -v)
 print_success "Node.js installed: $NODE_VERSION"
 print_success "npm installed: $NPM_VERSION"
 echo
 
-# Install Git
-print_step "Step 6/11: Installing Git..."
-sudo apt install -y git || error_exit "Failed to install Git"
-GIT_VERSION=$(git --version)
-print_success "$GIT_VERSION"
-echo
-
 # Install Composer
-print_step "Step 7/11: Installing Composer..."
+print_step "Step 6/12: Installing Composer (PHP package manager)..."
 if ! command -v composer &> /dev/null; then
     curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php || error_exit "Failed to download Composer"
     sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer --quiet || error_exit "Failed to install Composer"
@@ -165,13 +188,13 @@ print_success "$COMPOSER_VERSION"
 echo
 
 # Install npm dependencies
-print_step "Step 8/11: Installing npm dependencies..."
+print_step "Step 7/12: Installing npm dependencies..."
 npm install || error_exit "Failed to install npm dependencies"
 print_success "npm dependencies installed"
 echo
 
 # Configure environment
-print_step "Step 9/11: Configuring environment..."
+print_step "Step 8/12: Configuring environment..."
 if [ ! -f .env ]; then
     cp .env.example .env || error_exit "Failed to create .env file"
 
@@ -189,7 +212,7 @@ fi
 echo
 
 # Create storage directories
-print_step "Step 10/11: Setting up directories and permissions..."
+print_step "Step 9/12: Setting up directories and permissions..."
 mkdir -p storage/logs
 mkdir -p public/uploads
 chmod -R 775 storage
@@ -208,7 +231,7 @@ fi
 echo
 
 # Automated Database Setup
-print_step "Step 11/11: Setting up database automatically..."
+print_step "Step 10/12: Setting up database automatically..."
 
 # Create database and user
 print_step "Creating database and user..."
@@ -243,6 +266,37 @@ if [ "$TABLE_COUNT" -gt 1 ]; then
 else
     error_exit "Database verification failed"
 fi
+echo
+
+# Verify PHP extensions
+print_step "Step 11/12: Verifying PHP extensions..."
+REQUIRED_EXTENSIONS=("pdo_mysql" "mbstring" "xml" "curl" "zip" "gd" "bcmath" "intl")
+MISSING_EXTENSIONS=()
+
+for ext in "${REQUIRED_EXTENSIONS[@]}"; do
+    if ! php -m | grep -qi "^$ext$"; then
+        MISSING_EXTENSIONS+=("$ext")
+    fi
+done
+
+if [ ${#MISSING_EXTENSIONS[@]} -eq 0 ]; then
+    print_success "All required PHP extensions installed"
+else
+    print_warning "Missing extensions: ${MISSING_EXTENSIONS[*]}"
+    print_warning "Attempting to fix..."
+    for ext in "${MISSING_EXTENSIONS[@]}"; do
+        sudo apt install -y "php8.2-${ext}" 2>/dev/null || true
+    done
+fi
+echo
+
+# Final system check
+print_step "Step 12/12: Running final system checks..."
+print_success "PHP: $(php -v | head -n 1)"
+print_success "MariaDB: $(mysql --version)"
+print_success "Node.js: $(node -v)"
+print_success "npm: $(npm -v)"
+print_success "Composer: $(composer --version --no-ansi | head -n 1)"
 echo
 
 # Installation complete
